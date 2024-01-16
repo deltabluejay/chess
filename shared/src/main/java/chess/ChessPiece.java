@@ -73,6 +73,7 @@ public class ChessPiece {
 
                 if (checkPos.getRow() > 8 || checkPos.getRow() < 1 || checkPos.getColumn() > 8 || checkPos.getColumn() < 1) {
                     break;
+                }
                 ChessPiece piece = board.getPiece(checkPos);
                 if (piece != null) {
                     break;

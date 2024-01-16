@@ -60,6 +60,32 @@ public class ChessPiece {
     }
 
     /**
+     * Helper function for pieceMoves
+     *
+     * @return Collection of valid moves
+     */
+    private Collection<ChessMove> calculateMoves(int[][] directions, ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> moves = new ArrayList<>();
+        for (int i = 0; i < directions.length; i++) {
+            ChessPosition checkPos = new ChessPosition(myPosition.getRow(), myPosition.getColumn());
+            while (true) {
+                checkPos = new ChessPosition(checkPos.getRow() + directions[i][0], checkPos.getColumn() + directions[i][1]);
+
+                if (checkPos.getRow() > 8 || checkPos.getRow() < 1 || checkPos.getColumn() > 8 || checkPos.getColumn() < 1) {
+                    break;
+                ChessPiece piece = board.getPiece(checkPos);
+                if (piece != null) {
+                    break;
+                } else {
+                    ChessMove validMove = new ChessMove(myPosition, checkPos, null);
+                    moves.add(validMove);
+                }
+            }
+        }
+        return moves;
+    }
+
+    /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
      * danger
@@ -67,41 +93,14 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> moves = new ArrayList<>();
+        int[][] directions = null;
         switch (type) {
             case PieceType.BISHOP:
-                for (int i = 0; i < 4; i++) {
-                    ChessPosition checkPos = new ChessPosition(myPosition.getRow(), myPosition.getColumn());
-                    while (true) {
-                        switch (i) {
-                            case 0:
-                                checkPos = new ChessPosition(checkPos.getRow()+1, checkPos.getColumn()+1);
-                                break;
-                            case 1:
-                                checkPos = new ChessPosition(checkPos.getRow()-1, checkPos.getColumn()+1);
-                                break;
-                            case 2:
-                                checkPos = new ChessPosition(checkPos.getRow()-1, checkPos.getColumn()-1);
-                                break;
-                            case 3:
-                                checkPos = new ChessPosition(checkPos.getRow()+1, checkPos.getColumn()-1);
-                                break;
-                        }
-
-                        if (checkPos.getRow() > 8 || checkPos.getRow() < 1 || checkPos.getColumn() > 8 || checkPos.getColumn() < 1) {
-                            break;
-                        }
-                        ChessPiece piece = board.getPiece(checkPos);
-                        if (piece != null) {
-                            break;
-                        } else {
-                            ChessMove validMove = new ChessMove(myPosition, checkPos, null);
-                            moves.add(validMove);
-                        }
-                    }
-                }
-                break;
+                directions = new int[][]{
+                        {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
+                };
+                return calculateMoves(directions, board, myPosition);
         }
-        return moves;
+        return null;
     }
 }

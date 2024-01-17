@@ -119,13 +119,22 @@ public class ChessPiece {
             ChessPiece forwardPiece = board.getPiece(forwardPos);
             if (forwardPiece == null) {
                 ChessMove forwardMove;
-                if (forwardPos.getRow() == 7 || forwardPos.getRow() == 0) {
+                if (forwardPos.getRow() == 8 || forwardPos.getRow() == 1) {
                     // TODO: promotionPiece?
                     forwardMove = new ChessMove(myPosition, forwardPos, null);
                 } else {
                     forwardMove = new ChessMove(myPosition, forwardPos, null);
                 }
                 moves.add(forwardMove);
+
+                if ((myPosition.getRow() == 2 && pieceColor == ChessGame.TeamColor.WHITE) || (myPosition.getRow() == 7 && pieceColor == ChessGame.TeamColor.BLACK)) {
+                    ChessPosition twoForwardPos = new ChessPosition(myPosition.getRow() + 2*forward, myPosition.getColumn());
+                    ChessPiece twoForwardPiece = board.getPiece(twoForwardPos);
+                    if (twoForwardPiece == null) {
+                        ChessMove twoForwardMove = new ChessMove(myPosition, twoForwardPos, null);
+                        moves.add(twoForwardMove);
+                    }
+                }
             }
         }
 
@@ -133,7 +142,7 @@ public class ChessPiece {
             ChessPiece leftPiece = board.getPiece(checkLeftEnemy);
             if (leftPiece != null && leftPiece.getTeamColor() != pieceColor) {
                 ChessMove leftCapture;
-                if (forwardPos.getRow() == 7 || forwardPos.getRow() == 0) {
+                if (forwardPos.getRow() == 8 || forwardPos.getRow() == 1) {
                     // TODO: promotionPiece?
                     leftCapture = new ChessMove(myPosition, checkLeftEnemy, null);
                 } else {
@@ -147,7 +156,7 @@ public class ChessPiece {
             ChessPiece rightPiece = board.getPiece(checkRightEnemy);
             if (rightPiece != null && rightPiece.getTeamColor() != pieceColor) {
                 ChessMove rightCapture;
-                if (forwardPos.getRow() == 7 || forwardPos.getRow() == 0) {
+                if (forwardPos.getRow() == 8 || forwardPos.getRow() == 1) {
                     // TODO: promotionPiece?
                     rightCapture = new ChessMove(myPosition, checkRightEnemy, null);
                 } else {
@@ -157,14 +166,6 @@ public class ChessPiece {
             }
         }
 
-        if (myPosition.getRow() == 2 || myPosition.getRow() == 7) {
-            ChessPosition twoForwardPos = new ChessPosition(myPosition.getRow() + 2*forward, myPosition.getColumn());
-            ChessPiece twoForwardPiece = board.getPiece(twoForwardPos);
-            if (twoForwardPiece == null) {
-                ChessMove forwardMove = new ChessMove(myPosition, forwardPos, null);
-                moves.add(forwardMove);
-            }
-        }
 
         return moves;
     }

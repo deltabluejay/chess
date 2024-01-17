@@ -21,6 +21,35 @@ public class ChessPiece {
     }
 
     @Override
+    public String toString() {
+        String sym = "z";
+        switch (type) {
+            case ROOK:
+                sym = "r";
+                break;
+            case KNIGHT:
+                sym = "n";
+                break;
+            case BISHOP:
+                sym = "b";
+                break;
+            case QUEEN:
+                sym = "q";
+                break;
+            case KING:
+                sym = "k";
+                break;
+            case PAWN:
+                sym = "p";
+                break;
+        }
+        if (pieceColor == ChessGame.TeamColor.WHITE) {
+            sym = sym.toUpperCase();
+        }
+        return sym;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -64,21 +93,24 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
-    private Collection<ChessMove> calculateMoves(int[][] directions, ChessBoard board, ChessPosition myPosition) {
+    private Collection<ChessMove> calculateMoves(int[][] directions, int limit, ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> moves = new ArrayList<>();
-        for (int i = 0; i < directions.length; i++) {
+        for (int[] direction : directions) {
             ChessPosition checkPos = new ChessPosition(myPosition.getRow(), myPosition.getColumn());
-            while (true) {
-                checkPos = new ChessPosition(checkPos.getRow() + directions[i][0], checkPos.getColumn() + directions[i][1]);
+            for (int i = 0; i < limit; i++) {
+                checkPos = new ChessPosition(checkPos.getRow() + direction[0], checkPos.getColumn() + direction[1]);
 
                 if (checkPos.getRow() > 8 || checkPos.getRow() < 1 || checkPos.getColumn() > 8 || checkPos.getColumn() < 1) {
                     break;
                 }
                 ChessPiece piece = board.getPiece(checkPos);
+                ChessMove validMove = new ChessMove(myPosition, checkPos, null);
                 if (piece != null) {
+                    if (piece.pieceColor != this.pieceColor) {
+                        moves.add(validMove);
+                    }
                     break;
                 } else {
-                    ChessMove validMove = new ChessMove(myPosition, checkPos, null);
                     moves.add(validMove);
                 }
             }
@@ -100,7 +132,32 @@ public class ChessPiece {
                 directions = new int[][]{
                         {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
                 };
-                return calculateMoves(directions, board, myPosition);
+                return calculateMoves(directions, 100, board, myPosition);
+            case PieceType.ROOK:
+                directions = new int[][]{
+                        {0, 1}, {1, 0}, {-1, 0}, {0, -1}
+                };
+                return calculateMoves(directions, 100, board, myPosition);
+            case PieceType.QUEEN:
+                directions = new int[][]{
+                        {1, 1}, {1, -1}, {-1, 1}, {-1, -1},
+                        {0, 1}, {1, 0}, {-1, 0}, {0, -1}
+                };
+                return calculateMoves(directions, 100, board, myPosition);
+            case PieceType.KING:
+                directions = new int[][]{
+                        {1, 1}, {1, -1}, {-1, 1}, {-1, -1},
+                        {0, 1}, {1, 0}, {-1, 0}, {0, -1}
+                };
+                return calculateMoves(directions, 1, board, myPosition);
+            case PieceType.KNIGHT:
+                directions = new int[][]{
+                        {-1, 2}, {1, 2},
+                        {-2, 1}, {-2, -1},
+                        {-1, -2}, {1, -2},
+                        {2, 1}, {2, -1}
+                };
+                return calculateMoves(directions, 1, board, myPosition);
         }
         return null;
     }

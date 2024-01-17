@@ -158,6 +158,25 @@ public class ChessPiece {
                         {2, 1}, {2, -1}
                 };
                 return calculateMoves(directions, 1, board, myPosition);
+            case PieceType.PAWN:
+
+                if (pieceColor == ChessGame.TeamColor.WHITE) {
+                    Collection<ChessMove> moves = new ArrayList<>();
+                    directions = new int[][]{ {1, 0} };
+                    if (myPosition.getRow() == 2) {
+                        moves = calculateMoves(directions, 2, board, myPosition);
+                    } else {
+                        moves = calculateMoves(directions, 2, board, myPosition);
+                    }
+                } else {
+                    Collection<ChessMove> moves = new ArrayList<>();
+                    directions = new int[][]{ {-1, 0} };
+                    if (myPosition.getRow() == 7) {
+                        moves = calculateMoves(directions, 2, board, myPosition);
+                    } else {
+                        moves = calculateMoves(directions, 2, board, myPosition);
+                    }
+                }
         }
         return null;
     }

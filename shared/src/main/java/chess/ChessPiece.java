@@ -93,8 +93,80 @@ public class ChessPiece {
      *
      * @return If myPosition is in the chess board boundaries or not
      */
-    private boolean inBound(ChessPosition myPosition) {
+    private boolean inBounds(ChessPosition myPosition) {
        return !(myPosition.getRow() > 8 || myPosition.getRow() < 1 || myPosition.getColumn() > 8 || myPosition.getColumn() < 1);
+    }
+
+    /**
+     * Function specifically for calculating a pawn's moves
+     *
+     * @return Collection of valid moves
+     */
+    private Collection<ChessMove> calculatePawn(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> moves = new ArrayList<>();
+        int forward;
+        if (pieceColor == ChessGame.TeamColor.WHITE) {
+            forward = 1;
+        } else {
+            forward = -1;
+        }
+
+        ChessPosition forwardPos = new ChessPosition(myPosition.getRow() + forward, myPosition.getColumn());
+        ChessPosition checkLeftEnemy = new ChessPosition(myPosition.getRow() + forward, myPosition.getColumn() - 1);
+        ChessPosition checkRightEnemy = new ChessPosition(myPosition.getRow() + forward, myPosition.getColumn() + 1);
+
+        if (inBounds(forwardPos)) {
+            ChessPiece forwardPiece = board.getPiece(forwardPos);
+            if (forwardPiece == null) {
+                ChessMove forwardMove;
+                if (forwardPos.getRow() == 7 || forwardPos.getRow() == 0) {
+                    // TODO: promotionPiece?
+                    forwardMove = new ChessMove(myPosition, forwardPos, null);
+                } else {
+                    forwardMove = new ChessMove(myPosition, forwardPos, null);
+                }
+                moves.add(forwardMove);
+            }
+        }
+
+        if (inBounds(checkLeftEnemy)) {
+            ChessPiece leftPiece = board.getPiece(checkLeftEnemy);
+            if (leftPiece != null && leftPiece.getTeamColor() != pieceColor) {
+                ChessMove leftCapture;
+                if (forwardPos.getRow() == 7 || forwardPos.getRow() == 0) {
+                    // TODO: promotionPiece?
+                    leftCapture = new ChessMove(myPosition, checkLeftEnemy, null);
+                } else {
+                    leftCapture = new ChessMove(myPosition, checkLeftEnemy, null);
+                }
+                moves.add(leftCapture);
+            }
+        }
+
+        if (inBounds(checkRightEnemy)) {
+            ChessPiece rightPiece = board.getPiece(checkRightEnemy);
+            if (rightPiece != null && rightPiece.getTeamColor() != pieceColor) {
+                ChessMove rightCapture;
+                if (forwardPos.getRow() == 7 || forwardPos.getRow() == 0) {
+                    // TODO: promotionPiece?
+                    rightCapture = new ChessMove(myPosition, checkRightEnemy, null);
+                } else {
+                    rightCapture = new ChessMove(myPosition, checkRightEnemy, null);
+                }
+                moves.add(rightCapture);
+            }
+        }
+
+        if (myPosition.getRow() == 2 || myPosition.getRow() == 7) {
+            ChessPosition twoForwardPos = new ChessPosition(myPosition.getRow() + 2*forward, myPosition.getColumn());
+            ChessPiece twoForwardPiece = board.getPiece(twoForwardPos);
+            if (twoForwardPiece == null) {
+                ChessMove forwardMove = new ChessMove(myPosition, forwardPos, null);
+                moves.add(forwardMove);
+            }
+        }
+
+        return moves;
     }
 
     /**
@@ -109,7 +181,7 @@ public class ChessPiece {
             for (int i = 0; i < limit; i++) {
                 checkPos = new ChessPosition(checkPos.getRow() + direction[0], checkPos.getColumn() + direction[1]);
 
-                if (inBound(checkPos)) {
+                if (inBounds(checkPos)) {
                     ChessPiece piece = board.getPiece(checkPos);
                     ChessMove validMove = new ChessMove(myPosition, checkPos, null);
                     if (piece != null) {
@@ -167,7 +239,7 @@ public class ChessPiece {
                 };
                 return calculateMoves(directions, 1, board, myPosition);
             case PieceType.PAWN:
-
+                return calculatePawn(board, myPosition);
         }
         return null;
     }

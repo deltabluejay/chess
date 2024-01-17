@@ -89,6 +89,15 @@ public class ChessPiece {
     }
 
     /**
+     * Helper function for calculateMoves
+     *
+     * @return If myPosition is in the chess board boundaries or not
+     */
+    private boolean inBound(ChessPosition myPosition) {
+       return !(myPosition.getRow() > 8 || myPosition.getRow() < 1 || myPosition.getColumn() > 8 || myPosition.getColumn() < 1);
+    }
+
+    /**
      * Helper function for pieceMoves
      *
      * @return Collection of valid moves
@@ -100,18 +109,17 @@ public class ChessPiece {
             for (int i = 0; i < limit; i++) {
                 checkPos = new ChessPosition(checkPos.getRow() + direction[0], checkPos.getColumn() + direction[1]);
 
-                if (checkPos.getRow() > 8 || checkPos.getRow() < 1 || checkPos.getColumn() > 8 || checkPos.getColumn() < 1) {
-                    break;
-                }
-                ChessPiece piece = board.getPiece(checkPos);
-                ChessMove validMove = new ChessMove(myPosition, checkPos, null);
-                if (piece != null) {
-                    if (piece.pieceColor != this.pieceColor) {
+                if (inBound(checkPos)) {
+                    ChessPiece piece = board.getPiece(checkPos);
+                    ChessMove validMove = new ChessMove(myPosition, checkPos, null);
+                    if (piece != null) {
+                        if (piece.pieceColor != this.pieceColor) {
+                            moves.add(validMove);
+                        }
+                        break;
+                    } else {
                         moves.add(validMove);
                     }
-                    break;
-                } else {
-                    moves.add(validMove);
                 }
             }
         }
@@ -160,23 +168,6 @@ public class ChessPiece {
                 return calculateMoves(directions, 1, board, myPosition);
             case PieceType.PAWN:
 
-                if (pieceColor == ChessGame.TeamColor.WHITE) {
-                    Collection<ChessMove> moves = new ArrayList<>();
-                    directions = new int[][]{ {1, 0} };
-                    if (myPosition.getRow() == 2) {
-                        moves = calculateMoves(directions, 2, board, myPosition);
-                    } else {
-                        moves = calculateMoves(directions, 2, board, myPosition);
-                    }
-                } else {
-                    Collection<ChessMove> moves = new ArrayList<>();
-                    directions = new int[][]{ {-1, 0} };
-                    if (myPosition.getRow() == 7) {
-                        moves = calculateMoves(directions, 2, board, myPosition);
-                    } else {
-                        moves = calculateMoves(directions, 2, board, myPosition);
-                    }
-                }
         }
         return null;
     }

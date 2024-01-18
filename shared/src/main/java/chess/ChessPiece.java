@@ -120,12 +120,14 @@ public class ChessPiece {
             if (forwardPiece == null) {
                 ChessMove forwardMove;
                 if (forwardPos.getRow() == 8 || forwardPos.getRow() == 1) {
-                    for (PieceType promotion : PieceType.values()) {
-                        if (promotion != PieceType.KING && promotion != PieceType.PAWN) {
-                            forwardMove = new ChessMove(myPosition, forwardPos, promotion);
-                            moves.add(forwardMove);
-                        }
-                    }
+                    forwardMove = new ChessMove(myPosition, forwardPos, PieceType.ROOK);
+                    moves.add(forwardMove);
+                    forwardMove = new ChessMove(myPosition, forwardPos, PieceType.QUEEN);
+                    moves.add(forwardMove);
+                    forwardMove = new ChessMove(myPosition, forwardPos, PieceType.KNIGHT);
+                    moves.add(forwardMove);
+                    forwardMove = new ChessMove(myPosition, forwardPos, PieceType.BISHOP);
+                    moves.add(forwardMove);
                 } else {
                     forwardMove = new ChessMove(myPosition, forwardPos, null);
                     moves.add(forwardMove);
@@ -147,12 +149,14 @@ public class ChessPiece {
             if (leftPiece != null && leftPiece.getTeamColor() != pieceColor) {
                 ChessMove leftCapture;
                 if (forwardPos.getRow() == 8 || forwardPos.getRow() == 1) {
-                    for (PieceType promotion : PieceType.values()) {
-                        if (promotion != PieceType.KING && promotion != PieceType.PAWN) {
-                            leftCapture = new ChessMove(myPosition, checkLeftEnemy, promotion);
-                            moves.add(leftCapture);
-                        }
-                    }
+                    leftCapture = new ChessMove(myPosition, checkLeftEnemy, PieceType.ROOK);
+                    moves.add(leftCapture);
+                    leftCapture = new ChessMove(myPosition, checkLeftEnemy, PieceType.QUEEN);
+                    moves.add(leftCapture);
+                    leftCapture = new ChessMove(myPosition, checkLeftEnemy, PieceType.KNIGHT);
+                    moves.add(leftCapture);
+                    leftCapture = new ChessMove(myPosition, checkLeftEnemy, PieceType.BISHOP);
+                    moves.add(leftCapture);
                 } else {
                     leftCapture = new ChessMove(myPosition, checkLeftEnemy, null);
                     moves.add(leftCapture);
@@ -165,12 +169,14 @@ public class ChessPiece {
             if (rightPiece != null && rightPiece.getTeamColor() != pieceColor) {
                 ChessMove rightCapture;
                 if (forwardPos.getRow() == 8 || forwardPos.getRow() == 1) {
-                    for (PieceType promotion : PieceType.values()) {
-                        if (promotion != PieceType.KING && promotion != PieceType.PAWN) {
-                            rightCapture = new ChessMove(myPosition, checkRightEnemy, promotion);
-                            moves.add(rightCapture);
-                        }
-                    }
+                    rightCapture = new ChessMove(myPosition, checkRightEnemy, PieceType.ROOK);
+                    moves.add(rightCapture);
+                    rightCapture = new ChessMove(myPosition, checkRightEnemy, PieceType.QUEEN);
+                    moves.add(rightCapture);
+                    rightCapture = new ChessMove(myPosition, checkRightEnemy, PieceType.KNIGHT);
+                    moves.add(rightCapture);
+                    rightCapture = new ChessMove(myPosition, checkRightEnemy, PieceType.BISHOP);
+                    moves.add(rightCapture);
                 } else {
                     rightCapture = new ChessMove(myPosition, checkRightEnemy, null);
                     moves.add(rightCapture);

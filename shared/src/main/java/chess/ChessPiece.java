@@ -120,12 +120,16 @@ public class ChessPiece {
             if (forwardPiece == null) {
                 ChessMove forwardMove;
                 if (forwardPos.getRow() == 8 || forwardPos.getRow() == 1) {
-                    // TODO: promotionPiece?
-                    forwardMove = new ChessMove(myPosition, forwardPos, null);
+                    for (PieceType promotion : PieceType.values()) {
+                        if (promotion != PieceType.KING && promotion != PieceType.PAWN) {
+                            forwardMove = new ChessMove(myPosition, forwardPos, promotion);
+                            moves.add(forwardMove);
+                        }
+                    }
                 } else {
                     forwardMove = new ChessMove(myPosition, forwardPos, null);
+                    moves.add(forwardMove);
                 }
-                moves.add(forwardMove);
 
                 if ((myPosition.getRow() == 2 && pieceColor == ChessGame.TeamColor.WHITE) || (myPosition.getRow() == 7 && pieceColor == ChessGame.TeamColor.BLACK)) {
                     ChessPosition twoForwardPos = new ChessPosition(myPosition.getRow() + 2*forward, myPosition.getColumn());
@@ -143,12 +147,16 @@ public class ChessPiece {
             if (leftPiece != null && leftPiece.getTeamColor() != pieceColor) {
                 ChessMove leftCapture;
                 if (forwardPos.getRow() == 8 || forwardPos.getRow() == 1) {
-                    // TODO: promotionPiece?
-                    leftCapture = new ChessMove(myPosition, checkLeftEnemy, null);
+                    for (PieceType promotion : PieceType.values()) {
+                        if (promotion != PieceType.KING && promotion != PieceType.PAWN) {
+                            leftCapture = new ChessMove(myPosition, checkLeftEnemy, promotion);
+                            moves.add(leftCapture);
+                        }
+                    }
                 } else {
                     leftCapture = new ChessMove(myPosition, checkLeftEnemy, null);
+                    moves.add(leftCapture);
                 }
-                moves.add(leftCapture);
             }
         }
 
@@ -157,12 +165,16 @@ public class ChessPiece {
             if (rightPiece != null && rightPiece.getTeamColor() != pieceColor) {
                 ChessMove rightCapture;
                 if (forwardPos.getRow() == 8 || forwardPos.getRow() == 1) {
-                    // TODO: promotionPiece?
-                    rightCapture = new ChessMove(myPosition, checkRightEnemy, null);
+                    for (PieceType promotion : PieceType.values()) {
+                        if (promotion != PieceType.KING && promotion != PieceType.PAWN) {
+                            rightCapture = new ChessMove(myPosition, checkRightEnemy, promotion);
+                            moves.add(rightCapture);
+                        }
+                    }
                 } else {
                     rightCapture = new ChessMove(myPosition, checkRightEnemy, null);
+                    moves.add(rightCapture);
                 }
-                moves.add(rightCapture);
             }
         }
 

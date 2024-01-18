@@ -11,10 +11,8 @@ import java.util.Objects;
 public class ChessPosition {
     @Override
     public String toString() {
-        return "ChessPosition{" +
-                "row=" + row +
-                ", col=" + col +
-                '}';
+        return "(" + row +
+                ", " + col + ")";
     }
     private final int row;
     private final int col;

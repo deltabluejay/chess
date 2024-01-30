@@ -50,9 +50,9 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        Collection<ChessMove> validMoves = null;
+        Collection<ChessMove> validMoves = new ArrayList<>();
         ChessPiece piece = board.getPiece(startPosition);
-        if (piece == null) {
+        if (piece != null) {
             Collection<ChessMove> moves = piece.pieceMoves(board, startPosition);
             ChessBoard boardCopy = new ChessBoard(board);
             for (ChessMove move : moves) {
@@ -181,7 +181,15 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                ChessPosition pos = new ChessPosition(i + 1, j + 1);
+                if (board.getPiece(pos)!= null && board.getPiece(pos).getTeamColor() == teamColor && !validMoves(pos).isEmpty()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**

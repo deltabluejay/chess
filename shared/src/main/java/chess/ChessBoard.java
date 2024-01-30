@@ -11,7 +11,10 @@ import java.util.Arrays;
 public class ChessBoard {
     private ChessPiece[][] board = new ChessPiece[8][8];
     public ChessBoard() {
-        
+    }
+
+    public ChessBoard(ChessBoard boardCopy) {
+        this.board = Arrays.copyOf(boardCopy.board, boardCopy.board.length);
     }
 
     /**
@@ -56,6 +59,11 @@ public class ChessBoard {
         if (o == null || getClass() != o.getClass()) return false;
         ChessBoard that = (ChessBoard) o;
         return Arrays.deepEquals(board, that.board);
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 
     @Override

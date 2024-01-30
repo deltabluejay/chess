@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -11,6 +12,7 @@ import java.util.Collection;
 public class ChessGame {
 
     private ChessBoard board;
+    private TeamColor currentTurn;
 
     public ChessGame() {
 
@@ -20,7 +22,7 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+        return currentTurn;
     }
 
     /**
@@ -29,7 +31,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+        this.currentTurn = team;
     }
 
     /**
@@ -54,11 +56,11 @@ public class ChessGame {
     /**
      * Makes a move in a chess game
      *
-     * @param move chess move to preform
+     * @param move chess move to perform
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+
     }
 
     /**
@@ -92,7 +94,32 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (isInCheck(teamColor)) {
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    ChessPosition pos = new ChessPosition(i + 1, j + 1);
+                    ChessPiece piece = board.getPiece(pos);
+                    if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
+                        // make a new board for each possible move of the KING, and run isInCheck on it
+                        // if none of them return false, return true
+                        ChessBoard boardCopy = new ChessBoard(board);
+                        Collection<ChessMove> kingMoves = piece.pieceMoves(board, pos);
+                        for (ChessMove move : kingMoves) {
+                            board = new ChessBoard(boardCopy);
+                            try {
+                                makeMove(move);
+                            } catch (InvalidMoveException ex) {
+                                continue;
+                            }
+                            if (!isInCheck(teamColor)) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**

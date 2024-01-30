@@ -50,12 +50,26 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        Collection<ChessMove> validMoves = null;
         ChessPiece piece = board.getPiece(startPosition);
-        if (piece != null) {
-            return piece.pieceMoves(board, startPosition);
-        } else {
-            return null;
+        if (piece == null) {
+            Collection<ChessMove> moves = piece.pieceMoves(board, startPosition);
+            ChessBoard boardCopy = new ChessBoard(board);
+            for (ChessMove move : moves) {
+                board = new ChessBoard(boardCopy);
+                try {
+                    makeMove(move);
+                    validMoves.add(move);
+                } catch (InvalidMoveException ex) {
+                    if (ex.getMessage() == "Not your turn.") {
+                        validMoves.add(move);
+                    }
+                    continue;
+                }
+            }
+            board = new ChessBoard(boardCopy);
         }
+        return validMoves;
     }
 
     /**
@@ -66,11 +80,30 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece piece = board.getPiece(move.getStartPosition());
+
+        if (!piece.pieceMoves(board, move.getStartPosition()).contains(move)) {
+            throw new InvalidMoveException("Not a valid move.");
+        }
+
+        if (piece.getTeamColor() != currentTurn) {
+            throw new InvalidMoveException("Not your turn.");
+        }
+
         board.addPiece(move.getStartPosition(), null);
         if (move.getPromotionPiece() != null) {
             piece = new ChessPiece(piece.getTeamColor(), move.getPromotionPiece());
         }
         board.addPiece(move.getEndPosition(), piece);
+
+        if (isInCheck(piece.getTeamColor())) {
+            throw new InvalidMoveException("Can't move into check.");
+        }
+
+        if (currentTurn == TeamColor.WHITE) {
+            currentTurn = TeamColor.BLACK;
+        } else {
+            currentTurn = TeamColor.WHITE;
+        }
     }
 
     /**
@@ -85,7 +118,7 @@ public class ChessGame {
                 ChessPosition pos = new ChessPosition(i+1, j+1);
                 ChessPiece piece = board.getPiece(pos);
                 if (piece != null && piece.getTeamColor() != teamColor) {
-                    for (ChessMove move : validMoves(pos)) {
+                    for (ChessMove move : piece.pieceMoves(board, pos)) {
                         ChessPiece capturePiece = board.getPiece(move.getEndPosition());
                         if (capturePiece != null && capturePiece.getPieceType() == ChessPiece.PieceType.KING && capturePiece.getTeamColor() == teamColor) {
                             return true;
@@ -117,27 +150,27 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        if (isInCheck(teamColor)) {
-            Collection<ChessMove> kingMoves = validMoves(findKing(teamColor));
-
-            ChessBoard boardCopy = new ChessBoard(board);
-            for (ChessMove move : kingMoves) {
-                board = new ChessBoard(boardCopy);
-                try {
-                    makeMove(move);
-                } catch (InvalidMoveException ex) {
-                    continue;
-                }
-                if (!isInCheck(teamColor)) {
-                    board = boardCopy;
-                    return false;
-                }
-            }
-            board = boardCopy;
-            return true;
-        } else {
-            return false;
+        if (!isInCheck(teamColor)) {
+           return false;
         }
+        return true;
+//            Collection<ChessMove> kingMoves = validMoves(findKing(teamColor));
+//            ChessBoard boardCopy = new ChessBoard(board);
+//            for (ChessMove move : kingMoves) {
+//                board = new ChessBoard(boardCopy);
+//                try {
+//                    makeMove(move);
+//                    board = boardCopy;
+//                    return false;
+//                } catch (InvalidMoveException ex) {
+//                    continue;
+//                }
+//            }
+//            board = boardCopy;
+//            return true;
+//        } else {
+//            return false;
+//        }
     }
 
     /**

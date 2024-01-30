@@ -22,7 +22,7 @@ public class ChessPiece {
 
     @Override
     public String toString() {
-        String sym = "z";
+        String sym;
         switch (type) {
             case ROOK:
                 sym = "r";
@@ -41,6 +41,9 @@ public class ChessPiece {
                 break;
             case PAWN:
                 sym = "p";
+                break;
+            default:
+                sym = "x";
                 break;
         }
         if (pieceColor == ChessGame.TeamColor.WHITE) {
@@ -195,6 +198,7 @@ public class ChessPiece {
      */
     private Collection<ChessMove> calculateMoves(int[][] directions, int limit, ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> moves = new ArrayList<>();
+
         for (int[] direction : directions) {
             ChessPosition checkPos = new ChessPosition(myPosition.getRow(), myPosition.getColumn());
             for (int i = 0; i < limit; i++) {

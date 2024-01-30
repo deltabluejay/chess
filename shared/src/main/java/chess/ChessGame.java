@@ -60,7 +60,12 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-
+        ChessPiece piece = board.getPiece(move.getStartPosition());
+        board.addPiece(move.getStartPosition(), null);
+        if (move.getPromotionPiece() != null) {
+            piece = new ChessPiece(piece.getTeamColor(), move.getPromotionPiece());
+        }
+        board.addPiece(move.getEndPosition(), piece);
     }
 
     /**
@@ -87,6 +92,19 @@ public class ChessGame {
         return false;
     }
 
+    private ChessPosition findKing(TeamColor teamColor) {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                ChessPosition pos = new ChessPosition(i + 1, j + 1);
+                ChessPiece piece = board.getPiece(pos);
+                if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
+                    return pos;
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Determines if the given team is in checkmate
      *
@@ -95,31 +113,27 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         if (isInCheck(teamColor)) {
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++) {
-                    ChessPosition pos = new ChessPosition(i + 1, j + 1);
-                    ChessPiece piece = board.getPiece(pos);
-                    if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
-                        // make a new board for each possible move of the KING, and run isInCheck on it
-                        // if none of them return false, return true
-                        ChessBoard boardCopy = new ChessBoard(board);
-                        Collection<ChessMove> kingMoves = piece.pieceMoves(board, pos);
-                        for (ChessMove move : kingMoves) {
-                            board = new ChessBoard(boardCopy);
-                            try {
-                                makeMove(move);
-                            } catch (InvalidMoveException ex) {
-                                continue;
-                            }
-                            if (!isInCheck(teamColor)) {
-                                return false;
-                            }
-                        }
-                    }
+            ChessPosition kingPos = findKing(teamColor);
+            ChessPiece kingPiece = board.getPiece(kingPos);
+            ChessBoard boardCopy = new ChessBoard(board);
+            Collection<ChessMove> kingMoves = kingPiece.pieceMoves(board, kingPos);
+            for (ChessMove move : kingMoves) {
+                board = new ChessBoard(boardCopy);
+                try {
+                    makeMove(move);
+                } catch (InvalidMoveException ex) {
+                    continue;
+                }
+                if (!isInCheck(teamColor)) {
+                    board = boardCopy;
+                    return false;
                 }
             }
+            board = boardCopy;
+            return true;
+        } else {
+            return false;
         }
-        return true;
     }
 
     /**

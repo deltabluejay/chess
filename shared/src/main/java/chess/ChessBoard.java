@@ -14,7 +14,10 @@ public class ChessBoard {
     }
 
     public ChessBoard(ChessBoard boardCopy) {
-        this.board = Arrays.copyOf(boardCopy.board, boardCopy.board.length);
+        this.board = new ChessPiece[8][8];
+        for (int i = 0; i < 8; i++) {
+            this.board[i] = Arrays.copyOf(boardCopy.board[i], 8);
+        }
     }
 
     /**
@@ -30,10 +33,14 @@ public class ChessBoard {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("|");
         for (int i = board.length - 1; i >= 0; i--) {
+            builder.append("|");
             for (ChessPiece piece : board[i]) {
-                builder.append(piece);
+                if (piece != null) {
+                    builder.append(piece);
+                } else {
+                    builder.append(" ");
+                }
                 builder.append("|");
             }
             builder.append("\n");

@@ -37,7 +37,7 @@ public class Server {
             }
         });
 
-        Spark.post("/register", UserHandler::register);
+        Spark.post("/user", UserHandler::register);
 
         Spark.awaitInitialization();
         return Spark.port();

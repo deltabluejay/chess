@@ -18,10 +18,16 @@ public class UserHandler {
             throw new BadRequestError();
         }
 
-        AuthData auth = UserService.register(user);
-        res.status(200);
-        resData.put("username", auth.username());
-        resData.put("authToken", auth.authToken());
+        try {
+            AuthData auth = UserService.register(user);
+            res.status(200);
+            resData.put("username", auth.username());
+            resData.put("authToken", auth.authToken());
+        } catch(AlreadyTakenError e) {
+            res.status(403);
+            resData.put("message", e.getMessage());
+        }
+
         var body = new Gson().toJson(resData);
         res.body(body);
         return body;

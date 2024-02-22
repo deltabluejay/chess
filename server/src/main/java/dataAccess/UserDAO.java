@@ -1,4 +1,18 @@
 package dataAccess;
 
+import model.AuthData;
+import model.UserData;
+
 public interface UserDAO {
+    void createUser(UserData userData);
+
+    UserData getUser(UserData userData);
+
+    UserData getUser(String username);
+
+    AuthData createAuthToken(String username);
+
+    AuthData getAuthToken(AuthData authData);
+
+    AuthData getAuthToken(String authToken);
 }

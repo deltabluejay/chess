@@ -11,6 +11,12 @@ public class UserDAOMemory implements UserDAO {
     private static List<AuthData> authList = new ArrayList<>();
 
     @Override
+    public void clear() {
+        userList = new ArrayList<>();
+        authList = new ArrayList<>();
+    }
+
+    @Override
     public void createUser(UserData userData) {
         userList.add(userData);
     }

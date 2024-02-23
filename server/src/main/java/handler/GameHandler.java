@@ -6,7 +6,8 @@ import service.*;
 
 public class GameHandler {
     public static String clear(Request req, Response res) throws ServerError {
-
-        return null;
+        GameService.clear();
+        res.status(200);
+        return "";
     }
 }

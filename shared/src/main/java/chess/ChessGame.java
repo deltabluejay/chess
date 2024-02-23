@@ -133,19 +133,6 @@ public class ChessGame {
         return false;
     }
 
-    private ChessPosition findKing(TeamColor teamColor) {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                ChessPosition pos = new ChessPosition(i + 1, j + 1);
-                ChessPiece piece = board.getPiece(pos);
-                if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
-                    return pos;
-                }
-            }
-        }
-        return null;
-    }
-
     /**
      * Determines if the given teIteratorsam is in checkmate
      *
@@ -154,23 +141,6 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         return isInCheck(teamColor);
-//            Collection<ChessMove> kingMoves = validMoves(findKing(teamColor));
-//            ChessBoard boardCopy = new ChessBoard(board);
-//            for (ChessMove move : kingMoves) {
-//                board = new ChessBoard(boardCopy);
-//                try {
-//                    makeMove(move);
-//                    board = boardCopy;
-//                    return false;
-//                } catch (InvalidMoveException ex) {
-//                    continue;
-//                }
-//            }
-//            board = boardCopy;
-//            return true;
-//        } else {
-//            return false;
-//        }
     }
 
     /**

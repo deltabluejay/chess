@@ -2,6 +2,7 @@ package dataAccess;
 
 import java.util.List;
 import model.GameData;
+import service.AlreadyTakenError;
 
 public interface GameDAO {
     void clear();
@@ -12,5 +13,5 @@ public interface GameDAO {
 
     int create(String gameName);
 
-    void join(String username, String playerColor, int gameID);
+    void join(String username, String playerColor, int gameID) throws AlreadyTakenError;
 }

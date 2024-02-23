@@ -2,6 +2,7 @@ package dataAccess;
 
 import chess.ChessGame;
 import model.GameData;
+import service.AlreadyTakenError;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,17 +38,24 @@ public class GameDAOMemory implements GameDAO {
         return gameInt++;
     }
 
-    public void join(String username, String playerColor, int gameID) {
+    public void join(String username, String playerColor, int gameID) throws AlreadyTakenError {
         for (int i = 0; i < gameList.size(); i++) {
             GameData game = gameList.get(i);
             if (game.gameID() == gameID) {
-                System.out.println(playerColor);
-                if (playerColor.equals("WHITE")) {
-                    gameList.set(i, new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game()));
-                } else if (playerColor.equals("BLACK")) {
-                    gameList.set(i, new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game()));
+                if (playerColor != null) {
+                    if (playerColor.equals("WHITE")) {
+                        if (game.whiteUsername() != null) {
+                            throw new AlreadyTakenError();
+                        }
+                        gameList.set(i, new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game()));
+                    } else if (playerColor.equals("BLACK")) {
+                        if (game.blackUsername() != null) {
+                            throw new AlreadyTakenError();
+                        }
+                        gameList.set(i, new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game()));
+                    }
                 } else {
-                    // join as observer?
+                    //join as an observer?
                 }
             }
         }

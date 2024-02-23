@@ -35,7 +35,7 @@ public class GameService {
         return gameAccess.create(gameName);
     }
 
-    public static void join(String authToken, String playerColor, int gameID) throws BadRequestError, UnauthorizedError, ServerError {
+    public static void join(String authToken, String playerColor, int gameID) throws BadRequestError, UnauthorizedError, ServerError, AlreadyTakenError {
         AuthDAO authAccess = new AuthDAOMemory();
         AuthData auth = authAccess.getAuthToken(authToken);
         if (auth == null) {

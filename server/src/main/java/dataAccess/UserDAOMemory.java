@@ -5,6 +5,7 @@ import model.UserData;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.Iterator;
 
 public class UserDAOMemory implements UserDAO {
     private static List<UserData> userList = new ArrayList<>();
@@ -67,5 +68,23 @@ public class UserDAOMemory implements UserDAO {
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean deleteAuthToken(AuthData authData) {
+        return false;
+    }
+
+    @Override
+    public boolean deleteAuthToken(String authToken) {
+        Iterator<AuthData> iterator = authList.iterator();
+        while (iterator.hasNext()) {
+            AuthData auth = iterator.next();
+            if (auth.authToken().equals(authToken)) {
+                iterator.remove();
+                return true;
+            }
+        }
+        return false;
     }
 }

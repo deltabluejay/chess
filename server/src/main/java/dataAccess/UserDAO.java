@@ -18,4 +18,8 @@ public interface UserDAO {
     AuthData getAuthToken(AuthData authData);
 
     AuthData getAuthToken(String authToken);
+
+    boolean deleteAuthToken(AuthData authData);
+
+    boolean deleteAuthToken(String authToken);
 }

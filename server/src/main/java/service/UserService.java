@@ -22,4 +22,12 @@ public class UserService {
         AuthData auth = access.createAuthToken(user.username());
         return auth;
     }
+
+    public static void logout(String authToken) throws UnauthorizedError, ServerError {
+        UserDAO access = new UserDAOMemory();
+        boolean result = access.deleteAuthToken(authToken);
+        if (!result) {
+            throw new UnauthorizedError();
+        }
+    }
 }

@@ -37,4 +37,11 @@ public class UserHandler {
         res.body(body);
         return body;
     }
+
+    public static String logout(Request req, Response res) throws UnauthorizedError, ServerError {
+        String authToken = req.headers("authorization");
+        UserService.logout(authToken);
+        res.status(200);
+        return "";
+    }
 }

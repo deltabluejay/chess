@@ -1,8 +1,12 @@
 package server;
 
+import com.google.gson.Gson;
 import spark.*;
 import service.*;
 import handler.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Server {
 
@@ -11,33 +15,40 @@ public class Server {
         Spark.staticFiles.location("web");
 
         Spark.exception(BadRequestError.class, (e, req, res) -> {
-            res.status(500);
-            if (e.getMessage() != null) {
-                res.body("BadRequestError: " + e.getMessage());
-            } else {
-                res.body("BadRequestError");
-            }
+            Gson gson = new Gson();
+            Map<String, Object> resData = new HashMap<>();
+            res.status(400);
+            resData.put("message", e.getMessage());
+            res.body(gson.toJson(resData));
         });
 
         Spark.exception(ServerError.class, (e, req, res) -> {
+            Gson gson = new Gson();
+            Map<String, Object> resData = new HashMap<>();
             res.status(500);
-            if (e.getMessage() != null) {
-                res.body("ServerError: " + e.getMessage());
-            } else {
-                res.body("ServerError");
-            }
+            resData.put("message", e.getMessage());
+            res.body(gson.toJson(resData));
         });
 
         Spark.exception(UnauthorizedError.class, (e, req, res) -> {
-            res.status(500);
-            if (e.getMessage() != null) {
-                res.body("UnauthorizedError: " + e.getMessage());
-            } else {
-                res.body("UnauthorizedError");
-            }
+            Gson gson = new Gson();
+            Map<String, Object> resData = new HashMap<>();
+            res.status(401);
+            resData.put("message", e.getMessage());
+            res.body(gson.toJson(resData));
         });
 
+        Spark.exception(AlreadyTakenError.class, (e, req, res) -> {
+            Gson gson = new Gson();
+            Map<String, Object> resData = new HashMap<>();
+            res.status(403);
+            resData.put("message", e.getMessage());
+            res.body(gson.toJson(resData));
+        });
+
+        Spark.delete("/db", GameHandler::clear);
         Spark.post("/user", UserHandler::register);
+        Spark.post("/session", UserHandler::login);
 
         Spark.awaitInitialization();
         return Spark.port();

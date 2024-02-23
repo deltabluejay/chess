@@ -8,11 +8,11 @@ public record UserData(String username, String password, String email) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserData userData = (UserData) o;
-        return Objects.equals(username, userData.username) && Objects.equals(password, userData.password) && Objects.equals(email, userData.email);
+        return Objects.equals(username, userData.username) && Objects.equals(password, userData.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(username, password, email);
+        return Objects.hash(username, password);
     }
 }

@@ -2,7 +2,7 @@ package service;
 
 public class ServerError extends Exception {
     public ServerError() {
-        super();
+        super("Error: yeah idk what happened");
     }
 
     public ServerError(String message) {

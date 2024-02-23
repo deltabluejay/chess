@@ -18,7 +18,7 @@ public class UserDAOMemory implements UserDAO {
     @Override
     public UserData getUser(UserData userData) {
         for (UserData user : userList) {
-            if (user == userData) {
+            if (user.equals(userData)) {
                 return user;
             }
         }
@@ -46,7 +46,7 @@ public class UserDAOMemory implements UserDAO {
     @Override
     public AuthData getAuthToken(AuthData authData) {
         for (AuthData auth : authList) {
-            if (auth == authData) {
+            if (auth.equals(authData)) {
                 return auth;
             }
         }

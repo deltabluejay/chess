@@ -10,6 +10,7 @@ public interface UserDAO {
 
     UserData getUser(String username);
 
+    // Does this need to clear old authTokens?
     AuthData createAuthToken(String username);
 
     AuthData getAuthToken(AuthData authData);

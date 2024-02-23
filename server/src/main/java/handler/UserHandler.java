@@ -9,26 +9,31 @@ import model.*;
 import service.*;
 
 public class UserHandler {
-    public static String register(Request req, Response res) throws BadRequestError {
+    public static String register(Request req, Response res) throws AlreadyTakenError, BadRequestError, ServerError {
         Gson gson = new Gson();
-        Map<String, Object> resData = new HashMap<>();
 
         UserData user = gson.fromJson(req.body(), UserData.class);
         if (user.username() == null || user.password() == null || user.email() == null) {
             throw new BadRequestError();
         }
 
-        try {
-            AuthData auth = UserService.register(user);
-            res.status(200);
-            resData.put("username", auth.username());
-            resData.put("authToken", auth.authToken());
-        } catch(AlreadyTakenError e) {
-            res.status(403);
-            resData.put("message", e.getMessage());
-        }
+        AuthData auth = UserService.register(user);
+        res.status(200);
 
-        var body = new Gson().toJson(resData);
+        var body = gson.toJson(auth);
+        res.body(body);
+        return body;
+    }
+
+    public static String login(Request req, Response res) throws UnauthorizedError, ServerError {
+        Gson gson = new Gson();
+
+        UserData user = gson.fromJson(req.body(), UserData.class);
+
+        AuthData auth = UserService.login(user);
+        res.status(200);
+
+        var body = gson.toJson(auth);
         res.body(body);
         return body;
     }

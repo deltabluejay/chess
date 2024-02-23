@@ -2,7 +2,7 @@ package service;
 
 public class AlreadyTakenError extends Exception {
     public AlreadyTakenError() {
-        super();
+        super("Error: already taken");
     }
 
     public AlreadyTakenError(String message) {

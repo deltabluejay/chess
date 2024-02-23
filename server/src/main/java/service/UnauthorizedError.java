@@ -2,7 +2,7 @@ package service;
 
 public class UnauthorizedError extends Exception {
     public UnauthorizedError() {
-        super();
+        super("Error: unauthorized");
     }
 
     public UnauthorizedError(String message) {

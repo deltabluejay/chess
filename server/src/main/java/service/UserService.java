@@ -5,27 +5,30 @@ import dataAccess.*;
 
 public class UserService {
     public static AuthData register(UserData user) throws BadRequestError, AlreadyTakenError, ServerError {
-        UserDAO access = new UserDAOMemory();
-        if (access.getUser(user.username()) != null) {
+        UserDAO userAccess = new UserDAOMemory();
+        if (userAccess.getUser(user.username()) != null) {
             throw new AlreadyTakenError("Error: already taken");
         }
-        access.createUser(user);
-        AuthData auth = access.createAuthToken(user.username());
+        userAccess.createUser(user);
+
+        AuthDAO authAccess = new AuthDAOMemory();
+        AuthData auth = authAccess.createAuthToken(user.username());
         return auth;
     }
 
     public static AuthData login(UserData user) throws UnauthorizedError, ServerError {
-        UserDAO access = new UserDAOMemory();
-        if (access.getUser(user) == null) {
+        UserDAO userAccess = new UserDAOMemory();
+        if (userAccess.getUser(user) == null) {
             throw new UnauthorizedError();
         }
-        AuthData auth = access.createAuthToken(user.username());
+        AuthDAO authAccess = new AuthDAOMemory();
+        AuthData auth = authAccess.createAuthToken(user.username());
         return auth;
     }
 
     public static void logout(String authToken) throws UnauthorizedError, ServerError {
-        UserDAO access = new UserDAOMemory();
-        boolean result = access.deleteAuthToken(authToken);
+        AuthDAO authAccess = new AuthDAOMemory();
+        boolean result = authAccess.deleteAuthToken(authToken);
         if (!result) {
             throw new UnauthorizedError();
         }

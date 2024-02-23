@@ -16,8 +16,8 @@ public class GameService {
     }
 
     public static List<GameData> list(String authToken) throws UnauthorizedError, ServerError {
-        UserDAO userAccess = new UserDAOMemory();
-        if (userAccess.getAuthToken(authToken) == null) {
+        AuthDAO authAccess = new AuthDAOMemory();
+        if (authAccess.getAuthToken(authToken) == null) {
             throw new UnauthorizedError();
         }
 
@@ -26,8 +26,8 @@ public class GameService {
     }
 
     public static int create(String authToken, String gameName) throws UnauthorizedError, ServerError {
-        UserDAO userAccess = new UserDAOMemory();
-        if (userAccess.getAuthToken(authToken) == null) {
+        AuthDAO authAccess = new AuthDAOMemory();
+        if (authAccess.getAuthToken(authToken) == null) {
             throw new UnauthorizedError();
         }
 

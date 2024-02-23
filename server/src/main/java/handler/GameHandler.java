@@ -24,7 +24,10 @@ public class GameHandler {
         List<GameData> games = GameService.list(authToken);
         res.status(200);
 
-        var body = gson.toJson(games);
+        Map<String, List<GameData>> map = new HashMap<>();
+        map.put("games", games);
+
+        var body = gson.toJson(map);
         res.body(body);
         return body;
     }
@@ -46,5 +49,20 @@ public class GameHandler {
         var body = gson.toJson(map);
         res.body(body);
         return body;
+    }
+
+    public static String join(Request req, Response res) throws BadRequestError, UnauthorizedError, AlreadyTakenError, ServerError {
+        Gson gson = new Gson();
+
+        String authToken = req.headers("authorization");
+        record JoinGame(String playerColor, String gameID) {};
+        JoinGame game = gson.fromJson(req.body(), JoinGame.class);
+        if (game.gameID() == null) {
+            throw new BadRequestError();
+        }
+
+        GameService.join(authToken, game.playerColor(), Integer.parseInt(game.gameID()));
+        res.status(200);
+        return "";
     }
 }

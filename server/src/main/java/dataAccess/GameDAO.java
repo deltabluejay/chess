@@ -8,5 +8,9 @@ public interface GameDAO {
 
     List<GameData> list();
 
+    boolean exists(int gameID);
+
     int create(String gameName);
+
+    void join(String username, String playerColor, int gameID);
 }

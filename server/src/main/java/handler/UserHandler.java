@@ -5,8 +5,8 @@ import spark.Request;
 import spark.Response;
 import java.util.HashMap;
 import java.util.Map;
-import model.*;
 import service.*;
+import model.*;
 
 public class UserHandler {
     public static String register(Request req, Response res) throws AlreadyTakenError, BadRequestError, ServerError {

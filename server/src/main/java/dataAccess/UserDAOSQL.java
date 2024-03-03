@@ -2,10 +2,12 @@ package dataAccess;
 
 import model.UserData;
 
+import java.sql.SQLException;
+
 public class UserDAOSQL implements UserDAO {
     @Override
     public void clear() {
-
+        return;
     }
 
     @Override

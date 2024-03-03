@@ -2,10 +2,12 @@ package dataAccess;
 
 import model.AuthData;
 
+import java.util.concurrent.RecursiveTask;
+
 public class AuthDAOSQL implements AuthDAO {
     @Override
     public void clear() {
-
+        return;
     }
 
     @Override

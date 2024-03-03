@@ -3,24 +3,35 @@ package dataAccess;
 import model.GameData;
 import service.AlreadyTakenError;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameDAOSQL implements GameDAO {
+    public GameDAOSQL() {
+        if (!DatabaseManager.databaseExists()) {
+            try {
+                DatabaseManager.createDatabase();
+            } catch (DataAccessException e) {
+                DatabaseManager.handleSQLError(e);
+            }
+        }
+    }
+
     @Override
     public void clear() {
         try (var conn = DatabaseManager.getConnection()) {
-            String sql = "USE chess;\n" +
-                    "DROP TABLE IF EXISTS auth;\n" +
-                    "DROP TABLE IF EXISTS game;\n" +
-                    "DROP TABLE IF EXISTS user;\n" +
-                    "DROP DATABASE IF EXISTS chess;";
-            var stmt = conn.prepareStatement(sql);
-            stmt.execute();
+            String sql0 = "USE chess;";
+            String sql1 = "DROP TABLE IF EXISTS auth";
+            String sql2 = "DROP TABLE IF EXISTS game";
+            String sql3 = "DROP TABLE IF EXISTS user";
+            Statement stmt = conn.createStatement();
+            stmt.addBatch(sql1);
+            stmt.addBatch(sql2);
+            stmt.addBatch(sql3);
+            stmt.executeBatch();
         } catch (DataAccessException | SQLException e) {
-            System.out.println("SQL Error: " + e.getMessage());
+            DatabaseManager.handleSQLError(e);
         }
     }
 
@@ -43,7 +54,7 @@ public class GameDAOSQL implements GameDAO {
                 gameList.add(newGame);
             }
         } catch (DataAccessException | SQLException e) {
-            System.out.println("SQL Error: " + e.getMessage());
+            DatabaseManager.handleSQLError(e);
         }
         return gameList;
     }

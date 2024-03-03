@@ -24,16 +24,6 @@ public class AuthDAOMemory implements AuthDAO {
     }
 
     @Override
-    public AuthData getAuthToken(AuthData authData) {
-        for (AuthData auth : authList) {
-            if (auth.equals(authData)) {
-                return auth;
-            }
-        }
-        return null;
-    }
-
-    @Override
     public AuthData getAuthToken(String authToken) {
         for (AuthData auth : authList) {
             if (auth.authToken().equals(authToken)) {
@@ -41,11 +31,6 @@ public class AuthDAOMemory implements AuthDAO {
             }
         }
         return null;
-    }
-
-    @Override
-    public boolean deleteAuthToken(AuthData authData) {
-        return false;
     }
 
     @Override

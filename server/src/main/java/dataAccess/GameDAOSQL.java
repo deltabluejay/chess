@@ -21,14 +21,15 @@ public class GameDAOSQL implements GameDAO {
     @Override
     public void clear() {
         try (var conn = DatabaseManager.getConnection()) {
-            String sql0 = "USE chess;";
-            String sql1 = "DROP TABLE IF EXISTS auth";
-            String sql2 = "DROP TABLE IF EXISTS game";
-            String sql3 = "DROP TABLE IF EXISTS user";
+            String dropAuth = "DROP TABLE IF EXISTS auth";
+            String dropObservers = "DROP TABLE IF EXISTS observers";
+            String dropGame = "DROP TABLE IF EXISTS game";
+            String dropUser = "DROP TABLE IF EXISTS user";
             Statement stmt = conn.createStatement();
-            stmt.addBatch(sql1);
-            stmt.addBatch(sql2);
-            stmt.addBatch(sql3);
+            stmt.addBatch(dropAuth);
+            stmt.addBatch(dropObservers);
+            stmt.addBatch(dropGame);
+            stmt.addBatch(dropUser);
             stmt.executeBatch();
         } catch (DataAccessException | SQLException e) {
             DatabaseManager.handleSQLError(e, "clear");
@@ -99,15 +100,24 @@ public class GameDAOSQL implements GameDAO {
         try (var conn = DatabaseManager.getConnection()) {
             String checkSql;
             String updateSql;
-            if (playerColor.equals("WHITE")) {
-                checkSql = "SELECT whitePlayer FROM game WHERE gameID = ?";
-                updateSql = "UPDATE game SET whitePlayer = ? WHERE gameID = ?";
-            } else if (playerColor.equals("BLACK")) {
-                checkSql = "SELECT blackPlayer FROM game WHERE gameID = ?";
-                updateSql = "UPDATE game SET blackPlayer = ? WHERE gameID = ?";
+            PreparedStatement stmt;
+            if (playerColor != null) {
+                if (playerColor.equals("WHITE")) {
+                    checkSql = "SELECT whitePlayer FROM game WHERE gameID = ?";
+                    updateSql = "UPDATE game SET whitePlayer = ? WHERE gameID = ?";
+                } else {
+                    checkSql = "SELECT blackPlayer FROM game WHERE gameID = ?";
+                    updateSql = "UPDATE game SET blackPlayer = ? WHERE gameID = ?";
+                }
             } else {
+                updateSql = "INSERT INTO observers (gameID, username) VALUES (?, ?)";
+                stmt = conn.prepareStatement(updateSql);
+                stmt.setInt(1, gameID);
+                stmt.setString(2, username);
+                stmt.execute();
+                return;
             }
-            var stmt = conn.prepareStatement(checkSql);
+            stmt = conn.prepareStatement(checkSql);
             stmt.setInt(1, gameID);
             ResultSet rs = stmt.executeQuery();
 

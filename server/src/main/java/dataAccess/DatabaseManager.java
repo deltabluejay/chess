@@ -54,7 +54,7 @@ public class DatabaseManager {
                     count = 0;
                     if (rs.next()) {
                         count = rs.getInt("count");
-                        if (count == 3) {
+                        if (count == 4) {
                             return true;
                         }
                     }
@@ -117,6 +117,14 @@ public class DatabaseManager {
                             "    FOREIGN KEY (whitePlayer) REFERENCES user(username),\n" +
                             "    FOREIGN KEY (blackPlayer) REFERENCES user(username)\n" +
                             ");";
+            String createObservers = "CREATE TABLE IF NOT EXISTS observers (\n" +
+                    "    id INT PRIMARY KEY AUTO_INCREMENT,\n" +
+                    "    gameID INT,\n" +
+                    "    username VARCHAR(50),\n" +
+                    "    FOREIGN KEY (gameID) REFERENCES game(gameID),\n" +
+                    "    FOREIGN KEY (username) REFERENCES user(username)\n" +
+                    ");";
+
             var conn = DriverManager.getConnection(connectionUrl, user, password);
             Statement stmt = conn.createStatement();
             stmt.addBatch(createDb);
@@ -124,6 +132,7 @@ public class DatabaseManager {
             stmt.addBatch(createUser);
             stmt.addBatch(createAuth);
             stmt.addBatch(createGame);
+            stmt.addBatch(createObservers);
             stmt.executeBatch();
 
 //            try (var preparedStatement = conn.prepareStatement(statement)) {

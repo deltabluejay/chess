@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  chess-mysql-db:
+    image: mysql:8.0.36
+    container_name: chess-mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: whyareyoulookingatthis
+    ports:
+      - "3306:3306"
+    volumes:
+      - chess-db:/var/lib/mysql
+    command: ["--log-error=/var/log/mysql_error.log", "--general-log-file=/var/log/mysqld.log", "--general-log=1"]
+
+volumes:
+  chess-db:

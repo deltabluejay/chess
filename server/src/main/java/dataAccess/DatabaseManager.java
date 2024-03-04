@@ -75,12 +75,12 @@ public class DatabaseManager {
             String createDb = "CREATE DATABASE IF NOT EXISTS " + databaseName;
             String useDb = "USE " + databaseName;
             String createUser = "CREATE TABLE IF NOT EXISTS user (\n" +
-                            "    username VARCHAR(50) PRIMARY KEY,\n" +
+                            "    username VARCHAR(50) PRIMARY KEY NOT NULL,\n" +
                             "    password VARCHAR(100) NOT NULL,\n" +
                             "    email VARCHAR(100) NOT NULL\n" +
                             ")";
             String createAuth = "CREATE TABLE IF NOT EXISTS auth (\n" +
-                            "    authToken VARCHAR(100) PRIMARY KEY,\n" +
+                            "    authToken VARCHAR(100) PRIMARY KEY NOT NULL,\n" +
                             "    username VARCHAR(50) NOT NULL,\n" +
                             "    FOREIGN KEY (username) REFERENCES user(username)\n" +
                             ")";
@@ -90,14 +90,13 @@ public class DatabaseManager {
                             "    gameString VARCHAR(1000),\n" +
                             "    whitePlayer VARCHAR(50),\n" +
                             "    blackPlayer VARCHAR(50),\n" +
-                            "    observers VARCHAR(255),\n" +
                             "    FOREIGN KEY (whitePlayer) REFERENCES user(username),\n" +
                             "    FOREIGN KEY (blackPlayer) REFERENCES user(username)\n" +
                             ");";
             String createObservers = "CREATE TABLE IF NOT EXISTS observers (\n" +
-                    "    id INT PRIMARY KEY AUTO_INCREMENT,\n" +
-                    "    gameID INT,\n" +
-                    "    username VARCHAR(50),\n" +
+                    "    id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,\n" +
+                    "    gameID INT NOT NULL,\n" +
+                    "    username VARCHAR(50) NOT NULL,\n" +
                     "    FOREIGN KEY (gameID) REFERENCES game(gameID),\n" +
                     "    FOREIGN KEY (username) REFERENCES user(username)\n" +
                     ");";

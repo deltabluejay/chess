@@ -97,15 +97,30 @@ public class GameDAOSQL implements GameDAO {
     @Override
     public void join(String username, String playerColor, int gameID) throws AlreadyTakenError {
         try (var conn = DatabaseManager.getConnection()) {
-            String sql;
-            if (playerColor == "WHITE") {
-                sql = "UPDATE game SET whitePlayer = ? WHERE gameID = ?";
+            String checkSql;
+            String updateSql;
+            if (playerColor.equals("WHITE")) {
+                checkSql = "SELECT whitePlayer FROM game WHERE gameID = ?";
+                updateSql = "UPDATE game SET whitePlayer = ? WHERE gameID = ?";
+            } else if (playerColor.equals("BLACK")) {
+                checkSql = "SELECT blackPlayer FROM game WHERE gameID = ?";
+                updateSql = "UPDATE game SET blackPlayer = ? WHERE gameID = ?";
             } else {
-                sql = "UPDATE game SET blackPlayer = ? WHERE gameID = ?";
             }
-            var stmt = conn.prepareStatement(sql);
+            var stmt = conn.prepareStatement(checkSql);
+            stmt.setInt(1, gameID);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                if (rs.getString(1) != null) {
+                    throw new AlreadyTakenError();
+                }
+            }
+
+            stmt = conn.prepareStatement(updateSql);
             stmt.setString(1, username);
             stmt.setInt(2, gameID);
+            stmt.execute();
         } catch (DataAccessException | SQLException e) {
             DatabaseManager.handleSQLError(e, "join");
         }

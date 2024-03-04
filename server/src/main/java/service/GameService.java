@@ -7,7 +7,7 @@ import java.util.List;
 
 public class GameService {
     private static UserDAO createUserDAO() {
-        return new UserDAOMemory();
+        return new UserDAOSQL();
     }
 
     private static GameDAO createGameDAO() {
@@ -15,7 +15,7 @@ public class GameService {
     }
 
     private static AuthDAO createAuthDAO() {
-        return new AuthDAOMemory();
+        return new AuthDAOSQL();
     }
 
     public static void clear() {

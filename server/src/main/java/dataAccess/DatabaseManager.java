@@ -31,8 +31,8 @@ public class DatabaseManager {
         }
     }
 
-    static void handleSQLError(Exception e) {
-       System.out.println("SQL Error: " + e.getMessage());
+    static void handleSQLError(Exception e, String caller) {
+       System.out.println("SQL Error in " + caller + ": " + e.getMessage());
     }
 
     static boolean databaseExists() {
@@ -99,7 +99,7 @@ public class DatabaseManager {
             String useDb = "USE " + databaseName;
             String createUser = "CREATE TABLE IF NOT EXISTS user (\n" +
                             "    username VARCHAR(50) PRIMARY KEY,\n" +
-                            "    password VARCHAR(50) NOT NULL,\n" +
+                            "    password VARCHAR(100) NOT NULL,\n" +
                             "    email VARCHAR(100) NOT NULL\n" +
                             ")";
             String createAuth = "CREATE TABLE IF NOT EXISTS auth (\n" +

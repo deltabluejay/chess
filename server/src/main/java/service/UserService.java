@@ -5,15 +5,15 @@ import dataAccess.*;
 
 public class UserService {
     private static UserDAO createUserDAO() {
-        return new UserDAOMemory();
+        return new UserDAOSQL();
     }
 
     private static GameDAO createGameDAO() {
-        return new GameDAOMemory();
+        return new GameDAOSQL();
     }
 
     private static AuthDAO createAuthDAO() {
-        return new AuthDAOMemory();
+        return new AuthDAOSQL();
     }
 
     public static AuthData register(UserData user) throws BadRequestError, AlreadyTakenError, ServerError {

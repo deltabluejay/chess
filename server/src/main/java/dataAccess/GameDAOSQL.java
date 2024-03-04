@@ -13,7 +13,7 @@ public class GameDAOSQL implements GameDAO {
             try {
                 DatabaseManager.createDatabase();
             } catch (DataAccessException e) {
-                DatabaseManager.handleSQLError(e);
+                DatabaseManager.handleSQLError(e, "GameDAOSQL");
             }
         }
     }
@@ -31,7 +31,7 @@ public class GameDAOSQL implements GameDAO {
             stmt.addBatch(sql3);
             stmt.executeBatch();
         } catch (DataAccessException | SQLException e) {
-            DatabaseManager.handleSQLError(e);
+            DatabaseManager.handleSQLError(e, "clear");
         }
     }
 
@@ -54,23 +54,60 @@ public class GameDAOSQL implements GameDAO {
                 gameList.add(newGame);
             }
         } catch (DataAccessException | SQLException e) {
-            DatabaseManager.handleSQLError(e);
+            DatabaseManager.handleSQLError(e, "list");
         }
         return gameList;
     }
 
     @Override
     public boolean exists(int gameID) {
+        try (var conn = DatabaseManager.getConnection()) {
+            String sql = "SELECT * FROM game WHERE gameID = ?;";
+            var stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, gameID);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return true;
+            }
+        } catch (DataAccessException | SQLException e) {
+            DatabaseManager.handleSQLError(e, "exists");
+        }
         return false;
     }
 
     @Override
     public int create(String gameName) {
-        return 0;
+        try (var conn = DatabaseManager.getConnection()) {
+            String sql = "INSERT INTO game (gameName) VALUES (?)";
+            var stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+            stmt.setString(1, gameName);
+            stmt.executeUpdate();
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                int gameID = rs.getInt(1);
+                return gameID;
+            }
+        } catch (DataAccessException | SQLException e) {
+            DatabaseManager.handleSQLError(e, "create");
+        }
+        return -1;
     }
 
     @Override
     public void join(String username, String playerColor, int gameID) throws AlreadyTakenError {
-
+        try (var conn = DatabaseManager.getConnection()) {
+            String sql;
+            if (playerColor == "WHITE") {
+                sql = "UPDATE game SET whitePlayer = ? WHERE gameID = ?";
+            } else {
+                sql = "UPDATE game SET blackPlayer = ? WHERE gameID = ?";
+            }
+            var stmt = conn.prepareStatement(sql);
+            stmt.setString(1, username);
+            stmt.setInt(2, gameID);
+        } catch (DataAccessException | SQLException e) {
+            DatabaseManager.handleSQLError(e, "join");
+        }
     }
 }

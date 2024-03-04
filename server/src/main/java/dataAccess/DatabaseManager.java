@@ -72,29 +72,6 @@ public class DatabaseManager {
      */
     static void createDatabase() throws DataAccessException {
         try {
-            //var statement = "CREATE DATABASE IF NOT EXISTS " + databaseName;
-//            var statement = "CREATE DATABASE IF NOT EXISTS ?;\n" +
-//                    "USE ?;\n" +
-//                    "CREATE TABLE IF NOT EXISTS user (\n" +
-//                    "    username VARCHAR(50) PRIMARY KEY,\n" +
-//                    "    password VARCHAR(50) NOT NULL,\n" +
-//                    "    email VARCHAR(100) NOT NULL\n" +
-//                    ");\n" +
-//                    "CREATE TABLE IF NOT EXISTS auth (\n" +
-//                    "    authToken VARCHAR(100) PRIMARY KEY,\n" +
-//                    "    username VARCHAR(50) NOT NULL,\n" +
-//                    "    FOREIGN KEY (username) REFERENCES user(username)\n" +
-//                    ");\n" +
-//                    "CREATE TABLE IF NOT EXISTS game (\n" +
-//                    "    gameID INT PRIMARY KEY AUTO_INCREMENT,\n" +
-//                    "    gameName VARCHAR(100) NOT NULL,\n" +
-//                    "    gameString VARCHAR(1000),\n" +
-//                    "    whitePlayer VARCHAR(50),\n" +
-//                    "    blackPlayer VARCHAR(50),\n" +
-//                    "    observers VARCHAR(255),\n" +
-//                    "    FOREIGN KEY (whitePlayer) REFERENCES user(username),\n" +
-//                    "    FOREIGN KEY (blackPlayer) REFERENCES user(username)\n" +
-//                    ");";
             String createDb = "CREATE DATABASE IF NOT EXISTS " + databaseName;
             String useDb = "USE " + databaseName;
             String createUser = "CREATE TABLE IF NOT EXISTS user (\n" +
@@ -135,11 +112,6 @@ public class DatabaseManager {
             stmt.addBatch(createObservers);
             stmt.executeBatch();
 
-//            try (var preparedStatement = conn.prepareStatement(statement)) {
-//                preparedStatement.setString(1, databaseName);
-//                preparedStatement.setString(2, databaseName);
-//                preparedStatement.executeUpdate();
-//            }
             System.out.println("Database created successfully.");
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());

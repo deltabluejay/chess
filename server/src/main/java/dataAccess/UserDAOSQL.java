@@ -37,7 +37,7 @@ public class UserDAOSQL implements UserDAO {
     }
 
     @Override
-    public void createUser(UserData userData) {
+    public boolean createUser(UserData userData) {
         try (var conn = DatabaseManager.getConnection()) {
             String sql = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -46,9 +46,11 @@ public class UserDAOSQL implements UserDAO {
             stmt.setString(2, hashPassword(userData.password()));
             stmt.setString(3, userData.email());
             stmt.execute();
+            return true;
         } catch (SQLException | DataAccessException e) {
             DatabaseManager.handleSQLError(e, "createUser");
         }
+        return false;
     }
 
     @Override

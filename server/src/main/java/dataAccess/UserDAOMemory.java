@@ -16,8 +16,9 @@ public class UserDAOMemory implements UserDAO {
     }
 
     @Override
-    public void createUser(UserData userData) {
+    public boolean createUser(UserData userData) {
         userList.add(userData);
+        return true;
     }
 
     @Override

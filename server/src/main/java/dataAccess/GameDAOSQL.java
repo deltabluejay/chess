@@ -96,7 +96,7 @@ public class GameDAOSQL implements GameDAO {
     }
 
     @Override
-    public void join(String username, String playerColor, int gameID) throws AlreadyTakenError {
+    public boolean join(String username, String playerColor, int gameID) throws AlreadyTakenError {
         try (var conn = DatabaseManager.getConnection()) {
             String checkSql;
             String updateSql;
@@ -115,7 +115,7 @@ public class GameDAOSQL implements GameDAO {
                 stmt.setInt(1, gameID);
                 stmt.setString(2, username);
                 stmt.execute();
-                return;
+                return true;
             }
             stmt = conn.prepareStatement(checkSql);
             stmt.setInt(1, gameID);
@@ -131,8 +131,10 @@ public class GameDAOSQL implements GameDAO {
             stmt.setString(1, username);
             stmt.setInt(2, gameID);
             stmt.execute();
+            return true;
         } catch (DataAccessException | SQLException e) {
             DatabaseManager.handleSQLError(e, "join");
         }
+        return false;
     }
 }

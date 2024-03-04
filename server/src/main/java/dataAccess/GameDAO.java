@@ -13,5 +13,5 @@ public interface GameDAO {
 
     int create(String gameName);
 
-    void join(String username, String playerColor, int gameID) throws AlreadyTakenError;
+    boolean join(String username, String playerColor, int gameID) throws AlreadyTakenError;
 }

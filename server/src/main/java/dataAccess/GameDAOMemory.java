@@ -38,7 +38,7 @@ public class GameDAOMemory implements GameDAO {
         return gameInt++;
     }
 
-    public void join(String username, String playerColor, int gameID) throws AlreadyTakenError {
+    public boolean join(String username, String playerColor, int gameID) throws AlreadyTakenError {
         for (int i = 0; i < gameList.size(); i++) {
             GameData game = gameList.get(i);
             if (game.gameID() == gameID) {
@@ -54,10 +54,12 @@ public class GameDAOMemory implements GameDAO {
                         }
                         gameList.set(i, new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game()));
                     }
+                    return true;
                 } else {
                     //join as an observer?
                 }
             }
         }
+        return false;
     }
 }

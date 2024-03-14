@@ -28,6 +28,13 @@ public class ServerFacade {
         makeRequest("DELETE", path, null, null, token);
     }
 
+    public GameData createGame(String name, String token) throws ResponseException {
+        String path = "/game";
+        record GameRecord(String gameName) {}
+        GameRecord gameRecord = new GameRecord(name);
+        return makeRequest("POST", path, gameRecord, GameData.class, token);
+    }
+
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String auth) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();

@@ -1,4 +1,5 @@
 import model.AuthData;
+import model.GameData;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -88,7 +89,7 @@ public class ChessClient {
                 return String.format("Successfully registered and logged in as %s.", user);
             }
         }
-        throw new ResponseException(400, "Expected: <username> <password>");
+        throw new ResponseException(400, "Expected: <username> <password> <email>");
     }
 
     private String logout(String... params) throws ResponseException {
@@ -100,7 +101,15 @@ public class ChessClient {
     }
 
     private String createGame(String... params) throws ResponseException {
-        return "Created new game.";
+        if (params.length >= 1) {
+            String name = params[0];
+            GameData gameData = server.createGame(name, token);
+            if (gameData != null) {
+                int id = gameData.gameID();
+                return String.format("Created new game with ID %d.", id);
+            }
+        }
+        throw new ResponseException(400, "Expected: <name>");
     }
 
     private String listGames(String... params) throws ResponseException {

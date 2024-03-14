@@ -144,13 +144,26 @@ public class ChessClient {
             }
 
             server.joinGame(id, color, token);
-            return String.format("Successfully joined game as %s player.", color);
+            printBoard();
+            return String.format("Successfully joined game %d as %s player.", id, color);
         }
         throw new ResponseException(400, "Expected: <id> <white|black>");
     }
 
     private String observeGame(String... params) throws ResponseException {
-        throw new ResponseException(404, "Idk man");
+        if (params.length >= 1) {
+            int id;
+            try {
+                id = Integer.parseInt(params[0]);
+            } catch (NumberFormatException e) {
+                throw new ResponseException(400, "Expected: <id>");
+            }
+
+            server.observeGame(id, token);
+            printBoard();
+            return String.format("Now observing game %d.", id);
+        }
+        throw new ResponseException(400, "Expected: <id>");
     }
 
     private String help() {
@@ -170,5 +183,9 @@ public class ChessClient {
                       register <username> <password> <email> - Register a new user.
                       quit - Exits the program.""";
         }
+    }
+
+    private void printBoard() {
+
     }
 }

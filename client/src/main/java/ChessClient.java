@@ -137,9 +137,9 @@ public class ChessClient {
                 throw new ResponseException(400, "Expected: <id> <white|black>");
             }
 
-            String color = params[1];
+            String color = params[1].toUpperCase();
             System.out.println(color);
-            if (!(color.equals("white") || color.equals("black"))) {
+            if (!(color.equals("WHITE") || color.equals("BLACK"))) {
                 throw new ResponseException(400, "Expected: <id> <white|black>");
             }
 

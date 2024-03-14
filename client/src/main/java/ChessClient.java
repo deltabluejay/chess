@@ -61,7 +61,7 @@ public class ChessClient {
     }
 
     private String login(String... params) throws ResponseException {
-        if (params.length >= 1) {
+        if (params.length >= 2) {
             String username = params[0];
             String password = params[1];
             AuthData authData = server.login(username, password);
@@ -76,7 +76,19 @@ public class ChessClient {
     }
 
     private String register(String... params) throws ResponseException {
-        return String.format("Successfully registered and logged in as %s.", user);
+        if (params.length >= 3) {
+            String username = params[0];
+            String password = params[1];
+            String email = params[2];
+            AuthData authData = server.register(username, password, email);
+            if (authData.username() != null && authData.authToken() != null) {
+                user = authData.username();
+                token = authData.authToken();
+                loggedIn = true;
+                return String.format("Successfully registered and logged in as %s.", user);
+            }
+        }
+        throw new ResponseException(400, "Expected: <username> <password>");
     }
 
     private String logout(String... params) throws ResponseException {

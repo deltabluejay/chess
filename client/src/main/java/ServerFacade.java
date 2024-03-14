@@ -14,21 +14,30 @@ public class ServerFacade {
     public AuthData login(String username, String password) throws ResponseException {
         String path = "/session";
         UserData user = new UserData(username, password, null);
-        return makeRequest("POST", path, user, AuthData.class);
+        return makeRequest("POST", path, user, AuthData.class, null);
     }
 
     public AuthData register(String username, String password, String email) throws ResponseException {
         String path = "/user";
         UserData user = new UserData(username, password, email);
-        return makeRequest("POST", path, user, AuthData.class);
+        return makeRequest("POST", path, user, AuthData.class, null);
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+    public void logout(String token) throws ResponseException {
+        String path = "/session";
+        makeRequest("DELETE", path, null, null, token);
+    }
+
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String auth) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
+
+            if (auth != null) {
+                http.addRequestProperty("authorization", auth);
+            }
 
             writeBody(request, http);
             http.connect();
@@ -38,7 +47,6 @@ public class ServerFacade {
             throw new ResponseException(500, ex.getMessage());
         }
     }
-
 
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {
         if (request != null) {

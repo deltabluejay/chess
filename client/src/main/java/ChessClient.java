@@ -92,6 +92,10 @@ public class ChessClient {
     }
 
     private String logout(String... params) throws ResponseException {
+        server.logout(token);
+        user = null;
+        token = null;
+        loggedIn = false;
         return String.format("Successfully logged out as %s.", user);
     }
 

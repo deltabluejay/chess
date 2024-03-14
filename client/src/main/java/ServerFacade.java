@@ -3,6 +3,7 @@ import model.*;
 
 import java.io.*;
 import java.net.*;
+import java.util.List;
 
 public class ServerFacade {
     private final String serverUrl;
@@ -33,6 +34,13 @@ public class ServerFacade {
         record GameRecord(String gameName) {}
         GameRecord gameRecord = new GameRecord(name);
         return makeRequest("POST", path, gameRecord, GameData.class, token);
+    }
+
+    public List<GameData> listGames(String token) throws ResponseException {
+        String path = "/game";
+        record GameListRecord(List<GameData> games) {}
+        GameListRecord gameListRecord = makeRequest("GET", path, null, GameListRecord.class, token);
+        return gameListRecord.games();
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String auth) throws ResponseException {

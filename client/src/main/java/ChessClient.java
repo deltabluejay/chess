@@ -2,6 +2,7 @@ import model.AuthData;
 import model.GameData;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 import static ui.EscapeSequences.*;
 
@@ -113,7 +114,16 @@ public class ChessClient {
     }
 
     private String listGames(String... params) throws ResponseException {
-        return "List of games:";
+        List<GameData> games = server.listGames(token);
+        if (games != null) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("List of games:");
+            for (GameData game : games) {
+                builder.append(String.format("\n  %d: %s", game.gameID(), game.gameName()));
+            }
+            return builder.toString();
+        }
+        throw new ResponseException(400, "Expected: <name>");
     }
 
     private String joinGame(String... params) throws ResponseException {

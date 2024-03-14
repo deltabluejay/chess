@@ -43,6 +43,13 @@ public class ServerFacade {
         return gameListRecord.games();
     }
 
+    public void joinGame(int id, String color, String token) throws ResponseException {
+        String path = "/game";
+        record JoinRecord(String playerColor, int gameID) {}
+        JoinRecord joinRecord = new JoinRecord(color, id);
+        makeRequest("PUT", path, joinRecord, null, token);
+    }
+
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String auth) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();

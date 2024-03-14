@@ -51,8 +51,8 @@ public class ChessClient {
                 case "register" -> register(params);
                 case "logout" -> logout(params);
                 case "create" -> createGame(params);
-                case "list" -> listGames();
-                case "join" -> joinGame();
+                case "list" -> listGames(params);
+                case "join" -> joinGame(params);
                 case "observe" -> observeGame(params);
                 case "quit" -> "quit";
                 default -> help();
@@ -120,14 +120,33 @@ public class ChessClient {
             builder.append("List of games:");
             for (GameData game : games) {
                 builder.append(String.format("\n  %d: %s", game.gameID(), game.gameName()));
+                builder.append(String.format("\n    White player: %s", game.whiteUsername()));
+                builder.append(String.format("\n    Black player: %s", game.blackUsername()));
             }
             return builder.toString();
         }
-        throw new ResponseException(400, "Expected: <name>");
+        throw new ResponseException(400, "Error");
     }
 
     private String joinGame(String... params) throws ResponseException {
-        return "Joined game.";
+        if (params.length >= 2) {
+            int id;
+            try {
+                id = Integer.parseInt(params[0]);
+            } catch (NumberFormatException e) {
+                throw new ResponseException(400, "Expected: <id> <white|black>");
+            }
+
+            String color = params[1];
+            System.out.println(color);
+            if (!(color.equals("white") || color.equals("black"))) {
+                throw new ResponseException(400, "Expected: <id> <white|black>");
+            }
+
+            server.joinGame(id, color, token);
+            return String.format("Successfully joined game as %s player.", color);
+        }
+        throw new ResponseException(400, "Expected: <id> <white|black>");
     }
 
     private String observeGame(String... params) throws ResponseException {
@@ -141,7 +160,7 @@ public class ChessClient {
                       logout - Logs out.
                       create <name> - Creates a game.
                       list - Lists all games.
-                      join <id> - Joins a game.
+                      join <id> <white|black> - Joins a game.
                       observe <id> - Observes a game.
                       quit - Exits the program.""";
         } else {

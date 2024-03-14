@@ -1,21 +1,22 @@
+import model.AuthData;
+
 import java.util.Arrays;
 import java.util.Scanner;
 import static ui.EscapeSequences.*;
 
 public class ChessClient {
-    private String username = null;
+    private String user = null;
+    private String token = null;
     private boolean loggedIn = false;
-    private String serverUrl;
     private final ServerFacade server;
 
     public ChessClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
-        this.serverUrl = serverUrl;
     }
 
     public void run() {
         System.out.println(RESET_TEXT_COLOR + "C S 240- Chess client. Sign in to start.");
-        System.out.print(help());
+        System.out.println(SET_TEXT_COLOR_BLUE + help());
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -25,10 +26,10 @@ public class ChessClient {
 
             try {
                 result = eval(line);
-                System.out.print(SET_TEXT_COLOR_BLUE + result);
+                System.out.println(SET_TEXT_COLOR_BLUE + result);
             } catch (Throwable e) {
                 var msg = e.toString();
-                System.out.print(msg);
+                System.out.println(msg);
             }
         }
         System.out.println();
@@ -44,6 +45,8 @@ public class ChessClient {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
+                case "login" -> login(params);
+                case "register" -> register(params);
                 case "logout" -> logout(params);
                 case "create" -> createGame(params);
                 case "list" -> listGames();
@@ -57,8 +60,27 @@ public class ChessClient {
         }
     }
 
+    private String login(String... params) throws ResponseException {
+        if (params.length >= 1) {
+            String username = params[0];
+            String password = params[1];
+            AuthData authData = server.login(username, password);
+            if (authData.username() != null && authData.authToken() != null) {
+                user = authData.username();
+                token = authData.authToken();
+                loggedIn = true;
+                return String.format("Successfully logged in as %s.", user);
+            }
+        }
+        throw new ResponseException(400, "Expected: <username> <password>");
+    }
+
+    private String register(String... params) throws ResponseException {
+        return String.format("Successfully registered and logged in as %s.", user);
+    }
+
     private String logout(String... params) throws ResponseException {
-        return String.format("Successfully logged out as %s.", username);
+        return String.format("Successfully logged out as %s.", user);
     }
 
     private String createGame(String... params) throws ResponseException {
@@ -81,20 +103,18 @@ public class ChessClient {
         if (loggedIn) {
             return """
                       help - Displays this help command.
-                      logout <username> - Logs out.
+                      logout - Logs out.
                       create <name> - Creates a game.
                       list - Lists all games.
                       join <id> - Joins a game.
                       observe <id> - Observes a game.
-                      quit - Exits the program.
-                    """;
+                      quit - Exits the program.""";
         } else {
             return """
                       help - Displays this help command.
-                      login - Login using a username and password.
-                      register - Register a new user.
-                      quit - Exits the program.
-                    """;
+                      login <username> <password> - Login using a username and password.
+                      register <username> <password> <email> - Register a new user.
+                      quit - Exits the program.""";
         }
     }
 }

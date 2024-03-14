@@ -4,6 +4,7 @@ import static ui.EscapeSequences.*;
 
 public class ChessClient {
     private String username = null;
+    private boolean loggedIn = false;
     private String serverUrl;
     private final ServerFacade server;
 
@@ -13,7 +14,7 @@ public class ChessClient {
     }
 
     public void run() {
-        System.out.println("\uD83D\uDC36 C S 240- Chess client. Sign in to start.");
+        System.out.println(RESET_TEXT_COLOR + "C S 240- Chess client. Sign in to start.");
         System.out.print(help());
 
         Scanner scanner = new Scanner(System.in);
@@ -34,7 +35,7 @@ public class ChessClient {
     }
 
     private void printPrompt() {
-        System.out.print("\n" + RESET_TEXT_COLOR + "> " + SET_TEXT_COLOR_GREEN);
+        System.out.print(RESET_TEXT_COLOR + "> " + SET_TEXT_COLOR_GREEN);
     }
 
     public String eval(String input) {
@@ -77,6 +78,23 @@ public class ChessClient {
     }
 
     private String help() {
-        return "No help for you.";
+        if (loggedIn) {
+            return """
+                      help - Displays this help command.
+                      logout <username> - Logs out.
+                      create <name> - Creates a game.
+                      list - Lists all games.
+                      join <id> - Joins a game.
+                      observe <id> - Observes a game.
+                      quit - Exits the program.
+                    """;
+        } else {
+            return """
+                      help - Displays this help command.
+                      login - Login using a username and password.
+                      register - Register a new user.
+                      quit - Exits the program.
+                    """;
+        }
     }
 }

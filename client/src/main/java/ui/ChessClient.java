@@ -111,7 +111,7 @@ public class ChessClient {
             GameData gameData = server.createGame(name, token);
             if (gameData != null) {
                 int id = gameData.gameID();
-                return String.format("Created new game with ID %d.", id);
+                return "Created new game.";
             }
         }
         throw new ResponseException(400, "Expected: <name>");
@@ -151,7 +151,7 @@ public class ChessClient {
             server.joinGame(game.gameID(), color, token);
             printBoard(game.game());
             currentGames = server.listGames(token);
-            return String.format("Successfully joined game %d as %s player.", id, color);
+            return String.format("Successfully joined game %s as %s player.", game.gameName(), color);
         }
         throw new ResponseException(400, "Expected: <id> <white|black>");
     }
@@ -168,7 +168,7 @@ public class ChessClient {
             GameData game = currentGames.get(id-1);
             server.observeGame(game.gameID(), token);
             printBoard(game.game());
-            return String.format("Now observing game %d.", id);
+            return "Now observing game.";
         }
         throw new ResponseException(400, "Expected: <id>");
     }

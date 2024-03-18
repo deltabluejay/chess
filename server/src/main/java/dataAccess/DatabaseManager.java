@@ -87,7 +87,7 @@ public class DatabaseManager {
             String createGame = "CREATE TABLE IF NOT EXISTS game (\n" +
                             "    gameID INT PRIMARY KEY AUTO_INCREMENT,\n" +
                             "    gameName VARCHAR(100) NOT NULL,\n" +
-                            "    gameString VARCHAR(1000),\n" +
+                            "    gameString VARCHAR(10000),\n" +
                             "    whitePlayer VARCHAR(50),\n" +
                             "    blackPlayer VARCHAR(50),\n" +
                             "    FOREIGN KEY (whitePlayer) REFERENCES user(username),\n" +

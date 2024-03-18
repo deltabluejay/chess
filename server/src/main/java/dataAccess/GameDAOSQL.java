@@ -1,5 +1,8 @@
 package dataAccess;
 
+import chess.ChessGame;
+import chess.ChessPiece;
+import com.google.gson.Gson;
 import model.GameData;
 import service.AlreadyTakenError;
 
@@ -50,9 +53,11 @@ public class GameDAOSQL implements GameDAO {
                 String gameString = rs.getString(3);
                 String whitePlayer = rs.getString(4);
                 String blackPlayer = rs.getString(5);
-                // TODO: Deserialize gameString
-                GameData newGame = new GameData(gameID, whitePlayer, blackPlayer, gameName, null);
-                gameList.add(newGame);
+
+                var serializer = new Gson();
+                ChessGame chessGame = serializer.fromJson(gameString, ChessGame.class);
+                GameData game = new GameData(gameID, whitePlayer, blackPlayer, gameName, chessGame);
+                gameList.add(game);
             }
         } catch (DataAccessException | SQLException e) {
             DatabaseManager.handleSQLError(e, "list");
@@ -80,14 +85,19 @@ public class GameDAOSQL implements GameDAO {
     @Override
     public int create(String gameName) {
         try (var conn = DatabaseManager.getConnection()) {
-            String sql = "INSERT INTO game (gameName) VALUES (?)";
+            String sql = "INSERT INTO game (gameName, gameString) VALUES (?, ?)";
             var stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+
+            ChessGame newGame = new ChessGame();
+            var serializer = new Gson();
+            String gameString = serializer.toJson(newGame);
+
             stmt.setString(1, gameName);
+            stmt.setString(2, gameString);
             stmt.executeUpdate();
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
-                int gameID = rs.getInt(1);
-                return gameID;
+                return rs.getInt(1);
             }
         } catch (DataAccessException | SQLException e) {
             DatabaseManager.handleSQLError(e, "create");

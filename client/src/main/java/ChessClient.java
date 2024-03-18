@@ -1,3 +1,4 @@
+import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
 
@@ -10,6 +11,7 @@ public class ChessClient {
     private String user = null;
     private String token = null;
     private boolean loggedIn = false;
+    private List<GameData> currentGames = null;
     private final ServerFacade server;
 
     public ChessClient(String serverUrl) {
@@ -54,7 +56,7 @@ public class ChessClient {
                 case "list" -> listGames(params);
                 case "join" -> joinGame(params);
                 case "observe" -> observeGame(params);
-                case "quit" -> "quit";
+                case "exit", "quit" -> "quit";
                 default -> help();
             };
         } catch (ResponseException ex) {
@@ -114,12 +116,13 @@ public class ChessClient {
     }
 
     private String listGames(String... params) throws ResponseException {
-        List<GameData> games = server.listGames(token);
-        if (games != null) {
+        currentGames = server.listGames(token);
+        if (currentGames != null) {
             StringBuilder builder = new StringBuilder();
             builder.append("List of games:");
-            for (GameData game : games) {
-                builder.append(String.format("\n  %d: %s", game.gameID(), game.gameName()));
+            for (int i = 0; i < currentGames.size(); i++) {
+                GameData game = currentGames.get(i);
+                builder.append(String.format("\n%d. %s", i + 1, game.gameName()));
                 builder.append(String.format("\n    White player: %s", game.whiteUsername()));
                 builder.append(String.format("\n    Black player: %s", game.blackUsername()));
             }
@@ -143,8 +146,10 @@ public class ChessClient {
                 throw new ResponseException(400, "Expected: <id> <white|black>");
             }
 
-            server.joinGame(id, color, token);
-            printBoard();
+            GameData game = currentGames.get(id-1);
+            server.joinGame(game.gameID(), color, token);
+            printBoard(game.game());
+            currentGames = server.listGames(token);
             return String.format("Successfully joined game %d as %s player.", id, color);
         }
         throw new ResponseException(400, "Expected: <id> <white|black>");
@@ -159,8 +164,9 @@ public class ChessClient {
                 throw new ResponseException(400, "Expected: <id>");
             }
 
-            server.observeGame(id, token);
-            printBoard();
+            GameData game = currentGames.get(id-1);
+            server.observeGame(game.gameID(), token);
+            printBoard(game.game());
             return String.format("Now observing game %d.", id);
         }
         throw new ResponseException(400, "Expected: <id>");
@@ -185,7 +191,7 @@ public class ChessClient {
         }
     }
 
-    private void printBoard() {
-
+    private void printBoard(ChessGame game) {
+        System.out.println(game);
     }
 }

@@ -1,7 +1,12 @@
 package clientTests;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import server.Server;
+import service.GameService;
+import ui.*;
 
 
 public class ServerFacadeTests {
@@ -20,10 +25,18 @@ public class ServerFacadeTests {
         server.stop();
     }
 
+    @BeforeEach
+    public void clearDb() {
+        GameService.clear();
+    }
 
     @Test
-    public void sampleTest() {
-        Assertions.assertTrue(true);
+    public void registerTestPass() {
+    }
+
+    @Test
+    public void loginTestPass() {
+
     }
 
 }

@@ -1,3 +1,5 @@
+package ui;
+
 import chess.ChessGame;
 import model.AuthData;
 import model.GameData;

@@ -35,6 +35,11 @@ public class ChessGame {
         this.currentTurn = team;
     }
 
+    @Override
+    public String toString() {
+        return board.toString();
+    }
+
     /**
      * Enum identifying the 2 possible teams in a chess game
      */

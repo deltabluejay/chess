@@ -33,8 +33,9 @@ public class ChessBoard {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
+        builder.append("White:\n\n");
         for (int i = board.length - 1; i >= 0; i--) {
-            builder.append("|");
+            builder.append(String.format("%d   |", i+1));
             for (ChessPiece piece : board[i]) {
                 if (piece != null) {
                     builder.append(piece);
@@ -45,6 +46,24 @@ public class ChessBoard {
             }
             builder.append("\n");
         }
+        builder.append("\n     a b c d e f g h \n");
+
+        builder.append("\n");
+
+        builder.append("Black:\n\n");
+        for (int i = 0; i < board.length; i++) {
+            builder.append(String.format("%d   |", i+1));
+            for (ChessPiece piece : board[i]) {
+                if (piece != null) {
+                    builder.append(piece);
+                } else {
+                    builder.append(" ");
+                }
+                builder.append("|");
+            }
+            builder.append("\n");
+        }
+        builder.append("\n     h g f e d c b a \n");
 
         return builder.toString();
     }

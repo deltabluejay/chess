@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import server.websocket.WebSocketHandler;
 import spark.*;
 import service.*;
 import handler.*;
@@ -53,6 +54,8 @@ public class Server {
         Spark.get("/game", GameHandler::list);
         Spark.post("/game", GameHandler::create);
         Spark.put("/game", GameHandler::join);
+
+        Spark.webSocket("/connect", WebSocketHandler.class);
 
         Spark.awaitInitialization();
         return Spark.port();

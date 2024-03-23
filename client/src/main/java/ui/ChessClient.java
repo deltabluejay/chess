@@ -13,6 +13,7 @@ public class ChessClient {
     private String user = null;
     private String token = null;
     private boolean loggedIn = false;
+    private GameData currentGame = null;
     private List<GameData> currentGames = null;
     private final ServerFacade server;
 
@@ -58,6 +59,11 @@ public class ChessClient {
                 case "list" -> listGames(params);
                 case "join" -> joinGame(params);
                 case "observe" -> observeGame(params);
+                case "redraw" -> redrawBoard(params);
+                case "leave" -> leaveGame(params);
+                case "move" -> makeMove(params);
+                case "resign" -> resignGame(params);
+                case "highlight" -> highlightMoves(params);
                 case "exit", "quit" -> "quit";
                 default -> help();
             };
@@ -102,7 +108,7 @@ public class ChessClient {
         user = null;
         token = null;
         loggedIn = false;
-        return String.format("Successfully logged out as %s.", user);
+        return "Successfully logged out.";
     }
 
     private String createGame(String... params) throws ResponseException {
@@ -147,11 +153,16 @@ public class ChessClient {
                 throw new ResponseException(400, "Expected: <id> <white|black>");
             }
 
-            GameData game = currentGames.get(id-1);
-            server.joinGame(game.gameID(), color, token);
-            printBoard(game.game());
+            GameData joinedGame = currentGames.get(id-1);
+            server.joinGame(joinedGame.gameID(), color, token);
+            printBoard(joinedGame.game());
             currentGames = server.listGames(token);
-            return String.format("Successfully joined game %s as %s player.", game.gameName(), color);
+            for (GameData game : currentGames) {
+                if (game.gameID() == joinedGame.gameID()) {
+                    currentGame = game;
+                }
+            }
+            return String.format("Successfully joined game %s as %s player.", joinedGame.gameName(), color);
         }
         throw new ResponseException(400, "Expected: <id> <white|black>");
     }
@@ -165,16 +176,51 @@ public class ChessClient {
                 throw new ResponseException(400, "Expected: <id>");
             }
 
-            GameData game = currentGames.get(id-1);
-            server.observeGame(game.gameID(), token);
-            printBoard(game.game());
+            GameData joinedGame = currentGames.get(id-1);
+            server.observeGame(joinedGame.gameID(), token);
+            printBoard(joinedGame.game());
+            currentGames = server.listGames(token);
+            for (GameData game : currentGames) {
+                if (game.gameID() == joinedGame.gameID()) {
+                    currentGame = game;
+                }
+            }
             return "Now observing game.";
         }
         throw new ResponseException(400, "Expected: <id>");
     }
 
+    private String redrawBoard(String... params) {
+        return "Redrawing board...";
+    }
+
+    private String leaveGame(String... params) {
+        return "Leaving game...";
+    }
+
+    private String makeMove(String... params) {
+        return "Making move...";
+    }
+
+    private String resignGame(String... params) {
+        return "Resigning from game...";
+    }
+
+    private String highlightMoves(String... params) {
+        return "Highlighting legal moves...";
+    }
+
     private String help() {
         if (loggedIn) {
+            if (currentGame != null) {
+                return """
+                      help - Displays this help command.
+                      redraw - Redraws the chess board.
+                      leave - Leaves the game.
+                      move <pos1> <pos2> - Moves the chess piece at position 1 to position 2.
+                      resign - Forfeits the game.
+                      highlight <pos> - Highlights the legal moves for the piece at position.""";
+            }
             return """
                       help - Displays this help command.
                       logout - Logs out.

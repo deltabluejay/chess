@@ -17,7 +17,7 @@ public class ServerMessage {
         NOTIFICATION
     }
 
-    private String message;
+    protected String message;
 
     public ServerMessage(ServerMessageType type) {
         this.serverMessageType = type;

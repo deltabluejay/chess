@@ -26,11 +26,11 @@ public class WebSocketHandler {
     }
 
     private void joinPlayer(String message, Session session) throws IOException {
-        JoinPlayerCommand command = new Gson().fromJson(message, JoinPlayerCommand.class);
-        connections.add(command.getGameID(), session);
-        String response = String.format("%s joined the game.", command.getUsername());
+        JoinPlayerCommand cmd = new Gson().fromJson(message, JoinPlayerCommand.class);
+        connections.add(cmd.getGameID(), session);
+        String response = String.format("%s joined the game.", cmd.getUsername());
         var notification = new Notification(response);
-        connections.broadcast(command.getGameID(), notification);
+        connections.broadcast(cmd.getGameID(), notification);
         //connections.respond(command.getGameID(), notification, session);
     }
 

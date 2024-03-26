@@ -10,15 +10,18 @@ import java.util.Scanner;
 import static ui.EscapeSequences.*;
 
 public class ChessClient {
+    private String serverUrl;
     private String user = null;
     private String token = null;
     private boolean loggedIn = false;
     private GameData currentGame = null;
     private List<GameData> currentGames = null;
     private final ServerFacade server;
+    private WebSocketFacade ws;
 
     public ChessClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
+        this.serverUrl = serverUrl;
     }
 
     public void run() {
@@ -162,6 +165,8 @@ public class ChessClient {
                     currentGame = game;
                 }
             }
+            ws = new WebSocketFacade(serverUrl, this);
+            ws.joinGame(token, joinedGame.gameID(), ChessGame.TeamColor.valueOf(color), user);
             return String.format("Successfully joined game %s as %s player.", joinedGame.gameName(), color);
         }
         throw new ResponseException(400, "Expected: <id> <white|black>");
@@ -190,7 +195,7 @@ public class ChessClient {
         throw new ResponseException(400, "Expected: <id>");
     }
 
-    private String redrawBoard(String... params) {
+    public String redrawBoard(String... params) {
         return "Redrawing board...";
     }
 
@@ -206,7 +211,7 @@ public class ChessClient {
         return "Resigning from game...";
     }
 
-    private String highlightMoves(String... params) {
+    public String highlightMoves(String... params) {
         return "Highlighting legal moves...";
     }
 

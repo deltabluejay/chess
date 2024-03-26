@@ -27,10 +27,12 @@ public class WebSocketFacade extends Endpoint {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);
 
-            this.session.addMessageHandler((MessageHandler.Whole<String>) message -> {
-                System.out.println("GOT MSG: " + message);
-                ServerMessage serverMessage = new Gson().fromJson(message, Notification.class);
-                serverMessageHandler.handle(serverMessage);
+            this.session.addMessageHandler(new MessageHandler.Whole<String>() {
+                public void onMessage(String message) {
+                    System.out.println("GOT MSG: " + message);
+                    ServerMessage serverMessage = new Gson().fromJson(message, Notification.class);
+                    serverMessageHandler.handle(serverMessage);
+                }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
             throw new ResponseException(500, ex.getMessage());

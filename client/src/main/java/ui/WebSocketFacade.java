@@ -20,18 +20,17 @@ public class WebSocketFacade extends Endpoint {
     public WebSocketFacade(String url, ChessClient client) throws ResponseException {
         try {
             url = url.replace("http", "ws");
+            System.out.println(url);
             URI socketURI = new URI(url + "/connect");
             serverMessageHandler = new ServerMessageHandler(client);
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);
 
-            this.session.addMessageHandler(new MessageHandler.Whole<String>() {
-                @Override
-                public void onMessage(String message) {
-                    ServerMessage serverMessage = new Gson().fromJson(message, Notification.class);
-                    serverMessageHandler.handle(serverMessage);
-                }
+            this.session.addMessageHandler((MessageHandler.Whole<String>) message -> {
+                System.out.println("GOT MSG: " + message);
+                ServerMessage serverMessage = new Gson().fromJson(message, Notification.class);
+                serverMessageHandler.handle(serverMessage);
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
             throw new ResponseException(500, ex.getMessage());
@@ -45,7 +44,9 @@ public class WebSocketFacade extends Endpoint {
 
     private void sendCommand(UserGameCommand cmd) throws ResponseException {
         try {
-            this.session.getBasicRemote().sendText(new Gson().toJson(cmd));
+            String json = new Gson().toJson(cmd);
+            System.out.println("SENDING: " + json);
+            this.session.getBasicRemote().sendText(json);
         } catch (IOException ex) {
             throw new ResponseException(500, ex.getMessage());
         }

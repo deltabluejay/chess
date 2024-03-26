@@ -33,6 +33,7 @@ public class GameConnection {
     }
 
     private void send(String msg, Session session) throws IOException {
+        System.out.println("Sending msg: " + msg);
         session.getRemote().sendString(msg);
     }
 }

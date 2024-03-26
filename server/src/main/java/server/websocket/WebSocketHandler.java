@@ -22,6 +22,7 @@ public class WebSocketHandler {
             case MAKE_MOVE -> makeMove();
             case LEAVE -> leave();
             case RESIGN -> resign();
+            default -> System.out.println("ERROR: Unknown message received.");
         }
     }
 
@@ -30,6 +31,7 @@ public class WebSocketHandler {
         connections.add(cmd.getGameID(), session);
         String response = String.format("%s joined the game.", cmd.getUsername());
         var notification = new Notification(response);
+        System.out.println("RESPONDING: " + notification.toString());
         connections.broadcast(cmd.getGameID(), notification);
         //connections.respond(command.getGameID(), notification, session);
     }

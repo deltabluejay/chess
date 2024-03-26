@@ -10,10 +10,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Server {
+    private WebSocketHandler wsHandler;
+
+    public Server() {
+        this.wsHandler = new WebSocketHandler();
+    }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
         Spark.staticFiles.location("web");
+
+        Spark.webSocket("/connect", wsHandler);
 
         Spark.exception(BadRequestError.class, (e, req, res) -> {
             Gson gson = new Gson();
@@ -54,8 +61,6 @@ public class Server {
         Spark.get("/game", GameHandler::list);
         Spark.post("/game", GameHandler::create);
         Spark.put("/game", GameHandler::join);
-
-        Spark.webSocket("/connect", WebSocketHandler.class);
 
         Spark.awaitInitialization();
         return Spark.port();
